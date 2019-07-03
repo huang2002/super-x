@@ -1,0 +1,43 @@
+{
+    "name": "hyper-x",
+    "description": "A lightweight front-end lib.",
+    "version": "0.1.0",
+    "main": "dist/hyper-x.umd.min.js",
+    "module": "dist/hyper-x.min.js",
+    "types": "index.d.ts",
+    "scripts": {
+        "prebuild": "tsc",
+        "build": "rollup -c",
+        "postbuild": "terser dist/hyper-x.js --config-file terser.json --module -o dist/hyper-x.min.js && terser dist/hyper-x.umd.js --config-file terser.json -o dist/hyper-x.umd.min.js"
+    },
+    "license": "MIT",
+    "author": "3h",
+    "repository": "huang2002/hyper-x",
+    "bugs": {
+        "url": "https://github.com/huang2002/hyper-x/issues"
+    },
+    "homepage": "https://github.com/huang2002/hyper-x#readme",
+    "keywords": [
+        "hyper-x",
+        "x",
+        "lightweight",
+        "front-end",
+        "ui",
+        "lib",
+        "3h"
+    ],
+    "files": [
+        "dist",
+        "typings",
+        "index.d.ts"
+    ],
+    "devDependencies": {
+        "@babel/core": "^7.4.5",
+        "@babel/preset-env": "^7.4.5",
+        "hpolyfill": "^0.19.0",
+        "rollup": "^1.16.2",
+        "rollup-plugin-babel": "^4.3.3",
+        "terser": "^4.0.0",
+        "typescript": "^3.5.2"
+    }
+}
