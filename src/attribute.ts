@@ -7,7 +7,7 @@ import { StyleProperties } from "./style";
 export type AttributeSetter = (element: Element, value: any) => void;
 
 export interface Listeners {
-    [event: string]: EventListener | [EventListener, EventListenerOptions];
+    [event: string]: EventListener | [EventListener, EventListenerOptions | boolean];
 }
 
 type StyleValueRecord = [Value<string>, ValueListener<string>];
