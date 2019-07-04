@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>hyper-x test</title>
+    <script src="../dist/hyper-x.umd.min.js"></script>
+</head>
+
+<body>
+    <script>
+        const h = X.createElement;
+
+        function App() {
+            const title = new X.Value('Hello, world!');
+            return X.createFragment([
+                h('h1', null, title),
+                h('input', {
+                    bind: title
+                })
+            ]);
+        }
+
+        document.body.appendChild(App());
+    </script>
+</body>
+
+</html>
