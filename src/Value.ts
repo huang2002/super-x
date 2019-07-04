@@ -1,6 +1,6 @@
 import { _removeIndex, _iterate } from "./utils";
 import { _undefined, _document, _Object, _Array, _Promise } from "./references";
-import { setSchedule, clearSchedule } from "./schedule";
+import { addSchedule, removeSchedule } from "./schedule";
 
 export type ValueListener<T = unknown> = (this: Value<T>, newValue: T, oldValue: T) => void;
 export type ValueGetCallback<T = unknown> = (value: T) => void;
@@ -73,7 +73,7 @@ export class Value<T = unknown> {
     static compose<T extends readonly Value<any>[] = readonly Value[], U = unknown>(
         values: T, composer: ValueComposer<T, U>
     ) {
-        return this.unwrap(values).then(currentValues => {
+        this.unwrap(values).then(currentValues => {
             type ValueComposerApply = (thisArg: void, args: UnwrapValue<T>) => U;
             const newValue = new Value<U>(
                 (composer.apply as ValueComposerApply)(_undefined, currentValues)
@@ -147,14 +147,14 @@ export class Value<T = unknown> {
             });
             _destroyCallbacks.length = 0;
         }
-        clearSchedule(this.update);
+        removeSchedule(this.update);
         return this;
     }
 
     get() {
         return new _Promise<T>(resolve => {
             this._getCallbacks.push(resolve);
-            setSchedule(this.update);
+            addSchedule(this.update);
         });
     }
 
@@ -167,7 +167,7 @@ export class Value<T = unknown> {
         if (force) {
             this._forceAsync = true;
         }
-        setSchedule(this.update);
+        addSchedule(this.update);
         return this;
     }
 
@@ -188,7 +188,7 @@ export class Value<T = unknown> {
                 });
                 _getCallbacks.length = 0;
             }
-            clearSchedule(this.update);
+            removeSchedule(this.update);
         }
         this._current = newValue;
         return this;

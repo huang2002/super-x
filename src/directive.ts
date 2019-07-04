@@ -1,5 +1,5 @@
 import { Value } from "./Value";
-import { setSchedule } from "./schedule";
+import { addSchedule } from "./schedule";
 
 export interface InputElement extends Element {
     value: string;
@@ -31,7 +31,7 @@ export const bind = (element: InputElement, value: Value) => {
 };
 
 export const bindSync = (element: InputElement, value: Value) => {
-    setSchedule(() => {
+    addSchedule(() => {
         element.value = value.getSync() as string;
         const EVENT = getInputEvent(element);
         const _inputListener = () => {

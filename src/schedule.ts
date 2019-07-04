@@ -25,7 +25,7 @@ const _update = () => {
     _willTick = false;
 };
 
-export const setSchedule = (callback: ScheduleCallback) => {
+export const addSchedule = (callback: ScheduleCallback) => {
     if (!~_schedule.indexOf(callback)) {
         _schedule.push(callback);
     }
@@ -35,7 +35,7 @@ export const setSchedule = (callback: ScheduleCallback) => {
     }
 };
 
-export const clearSchedule = (callback: ScheduleCallback) => {
+export const removeSchedule = (callback: ScheduleCallback) => {
     const index = _schedule.indexOf(callback);
     if (~index) {
         _removeIndex(_schedule, index);
