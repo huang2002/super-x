@@ -27,7 +27,7 @@ export const attributeSetters = new Map<string | symbol, AttributeSetter>([
             element.setAttribute('style', style);
         } else {
             const records = new Array<StyleValueRecord>();
-            _iterate(style, (name, value) => {
+            _iterate(style, (value, name) => {
                 if ((value as any)._isXV) {
                     const _listener = (newValue: string) => {
                         (elementStyle as any)[name] = newValue;
@@ -42,7 +42,7 @@ export const attributeSetters = new Map<string | symbol, AttributeSetter>([
         }
     }],
     ['listeners', (element, listeners: Listeners) => {
-        _iterate(listeners, (event, listener) => {
+        _iterate(listeners, (listener, event) => {
             if (typeof listener === 'function') {
                 element.addEventListener(event, listener);
             } else {
@@ -84,7 +84,7 @@ export const setAttribute = (element: Element, name: string | symbol, value: any
 };
 
 export const setAttributes = <T extends {}>(element: Element, attributes: T) => {
-    _iterate(attributes, (name, value) => {
+    _iterate(attributes, (value, name) => {
         setAttribute(element, name, value);
     });
     return element;

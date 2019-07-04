@@ -11,7 +11,7 @@ export let getInputEvent = (element: InputElement): string =>
     element.tagName === 'INPUT' && element.getAttribute('type') === 'range' ? 'change' : 'input';
 
 export const bind = (element: InputElement, value: Value) => {
-    value.get(current => {
+    value.get().then(current => {
         element.value = current as string;
         const EVENT = getInputEvent(element);
         const _inputListener = () => {

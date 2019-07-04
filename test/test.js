@@ -3,7 +3,7 @@
 
 const h = X.createElement;
 
-const title = X.createStore({
+const title = X.Value.wrap({
     content: 'Hello, world!',
     color: '#000'
 });

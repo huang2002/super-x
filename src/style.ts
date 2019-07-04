@@ -24,9 +24,9 @@ export const createClass = (style: Style, placeholder?: RegExp) => {
     const CLASS_NAME = createClassName(),
         FULL_CLASS_NAME = '.' + CLASS_NAME,
         styleContent = new Array<string | Value<string>>();
-    _iterate(style, (styleKey, outer) => {
+    _iterate(style, (outer, styleKey) => {
         styleContent.push(styleKey.replace(placeholder!, FULL_CLASS_NAME) + '{');
-        _iterate<string | Value<string> | StyleProperties>(outer, (outerKey, inner) => {
+        _iterate<string | Value<string> | StyleProperties>(outer, (inner, outerKey) => {
             if (_isString(inner)) {
                 styleContent.push(`${outerKey}:${outer[outerKey]};`);
             } else if ((inner as any)._isXV) {
@@ -35,7 +35,7 @@ export const createClass = (style: Style, placeholder?: RegExp) => {
                 styleContent.push(';');
             } else {
                 styleContent.push(outerKey.replace(placeholder!, FULL_CLASS_NAME) + '{');
-                _iterate(inner as StyleProperties, (innerKey, value) => {
+                _iterate(inner as StyleProperties, (value, innerKey) => {
                     if (_isString(value)) {
                         styleContent.push(`${innerKey}:${value};`);
                     } else {

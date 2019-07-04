@@ -1,5 +1,5 @@
-import { _removeIndex, UnwrapValue } from "./utils";
-import { _undefined, _document, _Object } from "./references";
+import { _removeIndex, _iterate } from "./utils";
+import { _undefined, _document, _Object, _Array, _Promise } from "./references";
 import { setSchedule, clearSchedule } from "./schedule";
 
 export type ValueListener<T = unknown> = (this: Value<T>, newValue: T, oldValue: T) => void;
@@ -9,24 +9,99 @@ export type ValueDestroyCallback = () => void;
 export type ValueComposer<T extends readonly Value<any>[] = readonly Value[], U = unknown> =
     (this: void, ...args: UnwrapValue<T>) => U;
 
+export type WrapValue<T extends {} = any> = {
+    [K in keyof T]: T[K] extends Value<any> ? T[K] : Value<T[K]>;
+};
+
+export type UnwrapValue<T = any> = {
+    [K in keyof T]: T[K] extends Value<infer U> ? U : T[K];
+};
+
 export class Value<T = unknown> {
 
     static compare = _Object.is;
 
-    static unwrap<T extends readonly any[] = readonly any[]>(values: T) {
-        return values.map(
-            value => (value as any)._isXV ? value.getSync() : value
-        ) as unknown as UnwrapValue<T>;
+    static wrap<T extends {} = any>(values: T): WrapValue<T> {
+        if (_Array.isArray(values)) {
+            return values.map(
+                value => value._isXV ? value : new this(value)
+            ) as unknown as WrapValue<T>;
+        } else {
+            const result = {} as WrapValue<T>;
+            _iterate(values as { [key: string]: any; }, (value, key) => {
+                (result as any)[key] = value._isXV ? value : new this(value);
+            });
+            return result;
+        }
+    }
+
+    static unwrap<T = any>(values: T) {
+        if (_Array.isArray(values)) {
+            return _Promise.all(values.map(
+                value => value._isXV ? value.get() : value
+            )) as unknown as Promise<UnwrapValue<T>>;
+        } else {
+            const result = {} as UnwrapValue<T>,
+                promises = new Array<Promise<any>>();
+            _iterate(values as { [key: string]: any; }, (value, key) => {
+                if (value._isXV) {
+                    promises.push((value as Value).get().then(value => {
+                        (result as any)[key] = value;
+                    }));
+                } else {
+                    (result as any)[key] = value;
+                }
+            });
+            return _Promise.all(promises).then(() => result);
+        }
+    }
+
+    static unwrapSync<T = any>(values: T): UnwrapValue<T> {
+        if (_Array.isArray(values)) {
+            return values.map(
+                value => value._isXV ? value.getSync() : value
+            ) as unknown as UnwrapValue<T>;
+        } else {
+            const result = {} as UnwrapValue<T>;
+            _iterate(values as { [key: string]: any; }, (value, key) => {
+                (result as any)[key] = value._isXV ? value.getSync() : value;
+            });
+            return result;
+        }
     }
 
     static compose<T extends readonly Value<any>[] = readonly Value[], U = unknown>(
         values: T, composer: ValueComposer<T, U>
     ) {
+        return this.unwrap(values).then(currentValues => {
+            type ValueComposerApply = (thisArg: void, args: UnwrapValue<T>) => U;
+            const newValue = new Value<U>(
+                (composer.apply as ValueComposerApply)(_undefined, currentValues)
+            ), listener = () => {
+                this.unwrap(values).then(newValues => {
+                    newValue.set(() => (composer.apply as ValueComposerApply)(_undefined, newValues));
+                });
+            };
+            values.forEach(value => {
+                value._listeners.push(listener);
+            });
+            newValue.addDestroyCallback(() => {
+                values.forEach(value => {
+                    const { _listeners } = value;
+                    _removeIndex(_listeners, _listeners.indexOf(listener));
+                });
+            });
+        });
+    }
+
+    static composeSync<T extends readonly Value<any>[] = readonly Value[], U = unknown>(
+        values: T, composer: ValueComposer<T, U>
+    ) {
         type ValueComposerApply = (thisArg: void, args: UnwrapValue<T>) => U;
         const newValue = new Value<U>(
-            (composer.apply as ValueComposerApply)(_undefined, this.unwrap(values))
+            (composer.apply as ValueComposerApply)(_undefined, this.unwrapSync(values))
         ), listener = () => {
-            newValue.setSync((composer.apply as ValueComposerApply)(_undefined, this.unwrap(values)));
+            newValue.setSync((composer.apply as ValueComposerApply)(_undefined, this.unwrapSync(values)));
         };
         values.forEach(value => {
             value._listeners.push(listener);
@@ -76,10 +151,11 @@ export class Value<T = unknown> {
         return this;
     }
 
-    get(callback: ValueGetCallback<T>) {
-        this._getCallbacks.push(callback);
-        setSchedule(this.update);
-        return this;
+    get() {
+        return new _Promise<T>(resolve => {
+            this._getCallbacks.push(resolve);
+            setSchedule(this.update);
+        });
     }
 
     getSync() {
