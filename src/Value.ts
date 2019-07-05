@@ -190,6 +190,7 @@ export class Value<T = unknown> {
     setSync(newValue: T, force?: boolean) {
         if (this.active) {
             const { _current: oldValue } = this;
+            this._current = newValue;
             if (force || !Value.compare(oldValue, newValue)) {
                 this._listeners.forEach(listener => {
                     listener.call(this, newValue, oldValue);
@@ -206,7 +207,6 @@ export class Value<T = unknown> {
             }
             removeSchedule(this.update);
         }
-        this._current = newValue;
         return this;
     }
 
