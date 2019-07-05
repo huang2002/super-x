@@ -1,8 +1,7 @@
 import { _Boolean, _Array, _Object } from "./references";
-import { Value, ValueListener } from "./Value";
+import { Value } from "./Value";
 import { directives } from "./directive";
 import { _isString, _iterate } from "./utils";
-import { StyleProperties } from "./style";
 
 export type AttributeSetter = (element: Element, value: any) => void;
 
@@ -10,37 +9,7 @@ export interface Listeners {
     [event: string]: EventListener | [EventListener, EventListenerOptions | boolean];
 }
 
-type StyleValueRecord = [Value<string>, ValueListener<string>];
-
-const _styleValueRecords = new Map<CSSStyleDeclaration, StyleValueRecord[]>();
-
 export const attributeSetters = new Map<string | symbol, AttributeSetter>([
-    ['style', (element, style: StyleProperties | string) => {
-        const { style: elementStyle } = element as HTMLElement;
-        if (_styleValueRecords.has(elementStyle)) {
-            _styleValueRecords.get(elementStyle)!.forEach(record => {
-                record[0].removeListener(record[1]);
-            });
-        }
-        if (_isString(style)) {
-            _styleValueRecords.delete(elementStyle);
-            element.setAttribute('style', style);
-        } else {
-            const records = new Array<StyleValueRecord>();
-            _iterate(style, (value, name) => {
-                if ((value as any)._isXV) {
-                    const _listener = (newValue: string) => {
-                        (elementStyle as any)[name] = newValue;
-                    };
-                    (value as Value<string>).addListener(_listener);
-                    records.push([value as Value<string>, _listener]);
-                } else {
-                    (elementStyle as any)[name] = value;
-                }
-            });
-            _styleValueRecords.set(elementStyle, records);
-        }
-    }],
     ['listeners', (element, listeners: Listeners) => {
         _iterate(listeners, (listener, event) => {
             if (typeof listener === 'function') {
