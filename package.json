@@ -33,12 +33,12 @@
         "index.d.ts"
     ],
     "devDependencies": {
-        "@babel/core": "^7.4.5",
-        "@babel/preset-env": "^7.4.5",
-        "hpolyfill": "^0.19.0",
-        "rollup": "^1.16.2",
+        "@babel/core": "^7.5.0",
+        "@babel/preset-env": "^7.5.0",
+        "hpolyfill": "^0.19.2",
+        "rollup": "^1.16.6",
         "rollup-plugin-babel": "^4.3.3",
-        "terser": "^4.0.0",
+        "terser": "^4.0.2",
         "typescript": "^3.5.2"
     }
 }
