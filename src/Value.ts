@@ -6,8 +6,7 @@ export type ValueListener<T = unknown> = (this: Value<T>, newValue: T, oldValue:
 export type ValueGetCallback<T = unknown> = (value: T) => void;
 export type ValueSetCallback<T = unknown> = (oldValue: T) => T;
 export type ValueDestroyCallback = () => void;
-export type ValueComposer<T extends readonly Value<any>[] = readonly Value[], U = unknown> =
-    (this: void, ...args: UnwrapValue<T>) => U;
+export type ValueComposer<T extends {} = any, U = unknown> = (this: void, arg: UnwrapValue<T>) => U;
 
 export type WrapValue<T extends {} = any> = {
     [K in keyof T]: T[K] extends Value<any> ? T[K] : Value<T[K]>;
@@ -70,20 +69,24 @@ export class Value<T = unknown> {
         }
     }
 
-    static compose<T extends readonly Value<any>[] = readonly Value[], U = unknown>(
-        values: T, composer: ValueComposer<T, U>
+    static compose<T extends {} = any, U = unknown>(
+        components: T, composer: ValueComposer<T, U>
     ) {
-        this.unwrap(values).then(currentValues => {
-            type ValueComposerApply = (thisArg: void, args: UnwrapValue<T>) => U;
+        return this.unwrap(components).then(currentValues => {
             const newValue = new Value<U>(
-                (composer.apply as ValueComposerApply)(_undefined, currentValues)
+                composer.call(_undefined, currentValues)
             ), listener = () => {
-                this.unwrap(values).then(newValues => {
-                    newValue.set(() => (composer.apply as ValueComposerApply)(_undefined, newValues));
+                this.unwrap(components).then(newValues => {
+                    newValue.set(() => composer.call(_undefined, newValues));
                 });
             };
-            values.forEach(value => {
-                value._listeners.push(listener);
+            const componentArray = _Array.isArray(components) ? components : _Object.values(components),
+                values = new Array<Value>();
+            componentArray.forEach(component => {
+                if (component && (component as any)._isXV) {
+                    values.push(component as Value);
+                    (component as Value)._listeners.push(listener);
+                }
             });
             newValue.addDestroyCallback(() => {
                 values.forEach(value => {
@@ -91,20 +94,25 @@ export class Value<T = unknown> {
                     _removeIndex(_listeners, _listeners.indexOf(listener));
                 });
             });
+            return newValue;
         });
     }
 
-    static composeSync<T extends readonly Value<any>[] = readonly Value[], U = unknown>(
-        values: T, composer: ValueComposer<T, U>
+    static composeSync<T extends {} = any, U = unknown>(
+        components: T, composer: ValueComposer<T, U>
     ) {
-        type ValueComposerApply = (thisArg: void, args: UnwrapValue<T>) => U;
         const newValue = new Value<U>(
-            (composer.apply as ValueComposerApply)(_undefined, this.unwrapSync(values))
+            composer.call(_undefined, this.unwrapSync(components))
         ), listener = () => {
-            newValue.setSync((composer.apply as ValueComposerApply)(_undefined, this.unwrapSync(values)));
+            newValue.setSync(composer.call(_undefined, this.unwrapSync(components)));
         };
-        values.forEach(value => {
-            value._listeners.push(listener);
+        const componentArray = _Array.isArray(components) ? components : _Object.values(components),
+            values = new Array<Value>();
+        componentArray.forEach(component => {
+            if (component && (component as any)._isXV) {
+                values.push(component as Value);
+                (component as Value)._listeners.push(listener);
+            }
         });
         newValue.addDestroyCallback(() => {
             values.forEach(value => {
@@ -113,6 +121,14 @@ export class Value<T = unknown> {
             });
         });
         return newValue;
+    }
+
+    static join(components: any[], separator?: string) {
+        return this.compose(components, fragments => fragments.join(separator || ''));
+    }
+
+    static joinSync(components: any[], separator?: string) {
+        return this.composeSync(components, fragments => fragments.join(separator || ''));
     }
 
     constructor(initialValue: T) {
