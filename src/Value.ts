@@ -256,16 +256,18 @@ export class Value<T = unknown> {
     }
 
     map<U = unknown>(callback: (value: T) => U) {
-        const newValue = new Value<U>(callback(this._current)),
-            listener = (value: T) => { newValue.set(() => callback(value)); },
-            { _listeners } = this;
-        if (this.active) {
-            _listeners.push(listener);
-            newValue.addDestroyCallback(() => {
-                _removeIndex(_listeners, _listeners.indexOf(listener));
-            });
-        }
-        return newValue;
+        return this.get().then(current => {
+            const newValue = new Value<U>(callback(current)),
+                listener = (value: T) => { newValue.set(() => callback(value)); },
+                { _listeners } = this;
+            if (this.active) {
+                _listeners.push(listener);
+                newValue.addDestroyCallback(() => {
+                    _removeIndex(_listeners, _listeners.indexOf(listener));
+                });
+            }
+            return newValue;
+        });
     }
 
     mapSync<U = unknown>(callback: (value: T) => U) {
