@@ -8,7 +8,7 @@
     "scripts": {
         "prebuild": "tsc",
         "build": "rollup -c",
-        "postbuild": "terser dist/hyper-x.js --config-file terser.json --module -o dist/hyper-x.min.js && terser dist/hyper-x.umd.js --config-file terser.json -o dist/hyper-x.umd.min.js"
+        "postbuild": "terser dist/hyper-x.js --config-file terser.json --module -o dist/hyper-x.min.js && terser dist/hyper-x.umd.js --config-file terser.json -o dist/hyper-x.umd.min.js && node stat"
     },
     "license": "MIT",
     "author": "3h",
