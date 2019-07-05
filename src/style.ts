@@ -29,7 +29,7 @@ export const createClass = (style: Style, placeholder?: RegExp) => {
         _iterate<string | Value<string> | StyleProperties>(outer, (inner, outerKey) => {
             if (_isString(inner)) {
                 styleContent.push(`${outerKey}:${outer[outerKey]};`);
-            } else if ((inner as any)._isXV) {
+            } else if (inner && (inner as any)._isXV) {
                 styleContent.push(outerKey + ':');
                 styleContent.push(inner as Value<string>);
                 styleContent.push(';');

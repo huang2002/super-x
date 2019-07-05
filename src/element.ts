@@ -10,7 +10,7 @@ export const createFragment = (nodes: any[]) => {
 };
 
 export const appendChild = (element: Node, childNode: any) => {
-    if (childNode._isXV) {
+    if (childNode && childNode._isXV) {
         childNode = (childNode as Value<Node>).toTextNode();
     }
     element.appendChild(

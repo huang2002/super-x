@@ -24,12 +24,12 @@ export class Value<T = unknown> {
     static wrap<T extends {} = any>(values: T): WrapValue<T> {
         if (_Array.isArray(values)) {
             return values.map(
-                value => value._isXV ? value : new this(value)
+                value => (value && value._isXV) ? value : new this(value)
             ) as unknown as WrapValue<T>;
         } else {
             const result = {} as WrapValue<T>;
             _iterate(values as { [key: string]: any; }, (value, key) => {
-                (result as any)[key] = value._isXV ? value : new this(value);
+                (result as any)[key] = (value && value._isXV) ? value : new this(value);
             });
             return result;
         }
@@ -38,13 +38,13 @@ export class Value<T = unknown> {
     static unwrap<T = any>(values: T) {
         if (_Array.isArray(values)) {
             return _Promise.all(values.map(
-                value => value._isXV ? value.get() : value
+                value => (value && value._isXV) ? value.get() : value
             )) as unknown as Promise<UnwrapValue<T>>;
         } else {
             const result = {} as UnwrapValue<T>,
                 promises = new Array<Promise<any>>();
             _iterate(values as { [key: string]: any; }, (value, key) => {
-                if (value._isXV) {
+                if (value && value._isXV) {
                     promises.push((value as Value).get().then(value => {
                         (result as any)[key] = value;
                     }));
@@ -59,12 +59,12 @@ export class Value<T = unknown> {
     static unwrapSync<T = any>(values: T): UnwrapValue<T> {
         if (_Array.isArray(values)) {
             return values.map(
-                value => value._isXV ? value.getSync() : value
+                value => (value && value._isXV) ? value.getSync() : value
             ) as unknown as UnwrapValue<T>;
         } else {
             const result = {} as UnwrapValue<T>;
             _iterate(values as { [key: string]: any; }, (value, key) => {
-                (result as any)[key] = value._isXV ? value.getSync() : value;
+                (result as any)[key] = (value && value._isXV) ? value.getSync() : value;
             });
             return result;
         }

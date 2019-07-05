@@ -37,7 +37,7 @@ export const setAttribute = (element: Element, name: string | symbol, value: any
     if (directives.has(name)) {
         directives.get(name)!(element, value);
     } else {
-        if (value && (value as any)._isXV) {
+        if (value && value._isXV) {
             (value as Value).addListener(value => {
                 setAttribute(element, name, value);
             });
