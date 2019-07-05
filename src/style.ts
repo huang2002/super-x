@@ -13,19 +13,22 @@ export interface Style {
 
 let _styleCount = 0;
 
-export const createClassName = () => `x-class-${_styleCount++}`;
-
 export let defaultClassPlaceholder = /_/g;
 
-let _styleElement: HTMLStyleElement | void;
+export interface StyleContentCreator {
+    (style: Style, placeholder: RegExp, className: string): (string | Value<string>)[];
+    (style: Style): (string | Value<string>)[];
+}
 
-export const createClass = (style: Style, placeholder?: RegExp) => {
-    placeholder = placeholder || defaultClassPlaceholder;
-    const CLASS_NAME = createClassName(),
-        FULL_CLASS_NAME = '.' + CLASS_NAME,
+export const createStyleContent: StyleContentCreator = function (
+    style: Style, placeholder?: RegExp, className?: string
+) {
+    const FULL_CLASS_NAME = placeholder && ('.' + className),
         styleContent = new Array<string | Value<string>>();
     _iterate(style, (outer, styleKey) => {
-        styleContent.push(styleKey.replace(placeholder!, FULL_CLASS_NAME) + '{');
+        styleContent.push(
+            (placeholder ? styleKey.replace(placeholder!, FULL_CLASS_NAME!) : styleKey) + '{'
+        );
         _iterate<string | Value<string> | StyleProperties>(outer, (inner, outerKey) => {
             if (_isString(inner)) {
                 styleContent.push(`${outerKey}:${outer[outerKey]};`);
@@ -34,7 +37,9 @@ export const createClass = (style: Style, placeholder?: RegExp) => {
                 styleContent.push(inner as Value<string>);
                 styleContent.push(';');
             } else {
-                styleContent.push(outerKey.replace(placeholder!, FULL_CLASS_NAME) + '{');
+                styleContent.push(
+                    (placeholder ? outerKey.replace(placeholder!, FULL_CLASS_NAME!) : outerKey) + '{'
+                );
                 _iterate(inner as StyleProperties, (value, innerKey) => {
                     if (_isString(value)) {
                         styleContent.push(`${innerKey}:${value};`);
@@ -49,6 +54,16 @@ export const createClass = (style: Style, placeholder?: RegExp) => {
         });
         styleContent.push('}');
     });
+    return styleContent;
+};
+
+export const createClassName = () => `x-class-${_styleCount++}`;
+
+let _styleElement: HTMLStyleElement | void;
+
+export const createClass = (style: Style, placeholder?: RegExp, className?: string) => {
+    const CLASS_NAME = className || createClassName(),
+        styleContent = createStyleContent(style, placeholder || defaultClassPlaceholder, CLASS_NAME);
     if (_styleElement) {
         appendChildren(_styleElement, styleContent);
     } else {
