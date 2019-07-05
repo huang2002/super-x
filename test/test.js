@@ -65,7 +65,7 @@ function LabelledInput(id, label, inputOptions) {
 
 document.body.appendChild(
     X.createFragment([
-        h('h1', { id: 'title', style: { color: title.color } }, title.content),
+        h('h1', { id: 'title', style: X.Value.join(['color', title.color], ':') }, title.content),
         LabelledInput('title-content-input', 'title content', {
             bind: title.content,
             listeners: {
