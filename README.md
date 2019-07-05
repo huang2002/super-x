@@ -17,32 +17,18 @@
 
 Here is the example code which creates a heading and an input on the page where the content of the heading will be synchronized with the value of the input.
 
-```html
-<!DOCTYPE html>
-<html>
+```js
+const h = X.createElement;
 
-<head>
-    <title>hyper-x test</title>
-    <script src="../dist/hyper-x.umd.min.js"></script>
-</head>
+function App() {
+    const title = new X.Value('Hello, world!');
+    return X.createFragment([
+        h('h1', null, title),
+        h('input', {
+            bind: title
+        })
+    ]);
+}
 
-<body>
-    <script>
-        const h = X.createElement;
-
-        function App() {
-            const title = new X.Value('Hello, world!');
-            return X.createFragment([
-                h('h1', null, title),
-                h('input', {
-                    bind: title
-                })
-            ]);
-        }
-
-        document.body.appendChild(App());
-    </script>
-</body>
-
-</html>
+document.body.appendChild(App());
 ```
