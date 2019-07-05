@@ -20,7 +20,7 @@ const inputWidth = new X.Value(10);
 
 const INPUT_CLASS = X.createClass({
     _: {
-        width: inputWidth.map(function (n) { return n + 'em'; }),
+        width: inputWidth.mapSync(function (n) { return n + 'em'; }),
         padding: '.2em .4em',
         border: 'solid 1px #666',
         'border-radius': '3px'
