@@ -20,7 +20,9 @@ export const bind = (element: InputElement, value: Value) => {
         };
         element.addEventListener(EVENT, _inputListener);
         const _listener = (newValue: unknown) => {
-            element.value = newValue as string;
+            if (element.value !== newValue) {
+                element.value = newValue as string;
+            }
         };
         value.addListener(_listener)
             .addDestroyCallback(() => {
@@ -40,7 +42,9 @@ export const bindSync = (element: InputElement, value: Value) => {
         };
         element.addEventListener(EVENT, _inputListener);
         const _listener = (newValue: unknown) => {
-            element.value = newValue as string;
+            if (element.value !== newValue) {
+                element.value = newValue as string;
+            }
         };
         value.addListener(_listener)
             .addDestroyCallback(() => {
