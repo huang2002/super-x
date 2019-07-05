@@ -5,20 +5,7 @@ import { _isString, _iterate } from "./utils";
 
 export type AttributeSetter = (element: Element, value: any) => void;
 
-export interface Listeners {
-    [event: string]: EventListener | [EventListener, EventListenerOptions | boolean];
-}
-
 export const attributeSetters = new Map<string | symbol, AttributeSetter>([
-    ['listeners', (element, listeners: Listeners) => {
-        _iterate(listeners, (listener, event) => {
-            if (typeof listener === 'function') {
-                element.addEventListener(event, listener);
-            } else {
-                element.addEventListener(event, listener[0], listener[1]);
-            }
-        });
-    }],
     ['class', (element, classList: string | object | unknown[]) => {
         if (classList && typeof classList === 'object') {
             element.setAttribute('class',
