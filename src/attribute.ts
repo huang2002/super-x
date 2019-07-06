@@ -18,6 +18,11 @@ export const attributeSetters = new Map<string | symbol, AttributeSetter>([
             element.setAttribute('class', classList);
         }
     }],
+    ['html', (element, content: string) => {
+        if (element.innerHTML !== content) {
+            element.innerHTML = content;
+        }
+    }],
 ]);
 
 export const setAttribute = (element: Element, name: string | symbol, value: any) => {
