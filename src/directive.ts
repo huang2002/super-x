@@ -8,8 +8,10 @@ export interface InputElement extends Element {
 
 export type DirectiveSetter = (element: Element, value: any) => void;
 
+
 export let getInputEvent = (element: InputElement): string =>
-    element.tagName === 'INPUT' && element.getAttribute('type') === 'range' ? 'change' : 'input';
+    (element.tagName === 'INPUT' && element.getAttribute('type') === 'range' ||
+        element.tagName === 'SELECT') ? 'change' : 'input';
 
 export const bind = (element: InputElement, value: Value) => {
     value.get().then(current => {
