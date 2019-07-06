@@ -311,6 +311,7 @@ export class Value<T = unknown> {
                     { parentNode } = node;
                 if (parentNode) {
                     parentNode.replaceChild(newNode, node);
+                    node = newNode;
                 }
             });
         }
