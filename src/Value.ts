@@ -20,6 +20,10 @@ export class Value<T = unknown> {
 
     static compare = _Object.is;
 
+    static of<T>(initialValue: T) {
+        return new this(initialValue);
+    }
+
     static wrap<T extends {} = any>(values: T): WrapValue<T> {
         if (_Array.isArray(values)) {
             return values.map(
