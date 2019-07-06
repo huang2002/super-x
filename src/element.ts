@@ -9,15 +9,23 @@ export const createFragment = (nodes: any[]) => {
     return fragment;
 };
 
+export const toNode = (value: any) => {
+    if (typeof value === 'boolean') {
+        return _document.createTextNode('');
+    } else if (value instanceof Node) {
+        return value;
+    } else if (_Array.isArray(value)) {
+        return createFragment(value);
+    } else {
+        return _document.createTextNode(value);
+    }
+};
+
 export const appendChild = (element: Node, childNode: any) => {
     if (childNode && childNode._isXV) {
-        childNode = (childNode as Value<Node>).toTextNode();
+        childNode = (childNode as Value<Node>).toNode();
     }
-    element.appendChild(
-        _isString(childNode) ?
-            _document.createTextNode(childNode) :
-            childNode as Node
-    );
+    element.appendChild(toNode(childNode));
 };
 
 export const appendChildren = (element: Node, childNodes: any[]) => {
