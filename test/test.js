@@ -16,7 +16,7 @@ const LABEL_CLASS = X.createClass({
     }
 });
 
-const inputWidth = new X.Value(10);
+const inputWidth = X.Value.of(10);
 
 const INPUT_CLASS = X.createClass({
     _: {
