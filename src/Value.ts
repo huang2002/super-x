@@ -1,6 +1,7 @@
 import { _removeIndex, _iterate } from "./utils";
 import { _undefined, _document, _Object, _Array, _Promise } from "./references";
 import { addSchedule, removeSchedule } from "./schedule";
+import { toNode } from "./element";
 
 export type ValueListener<T = unknown> = (this: Value<T>, newValue: T, oldValue: T) => void;
 export type ValueGetCallback<T = unknown> = (value: T) => void;
@@ -301,11 +302,12 @@ export class Value<T = unknown> {
     }
 
     toNode(transform?: (this: this, value: T) => Node) {
+        transform = transform || toNode;
         const { _current } = this;
-        let node = transform ? transform.call(this, _current) : _current as unknown as Node;
+        let node = transform.call(this, _current);
         if (this.active) {
             this._listeners.push(value => {
-                const newNode = transform ? transform.call(this, value) : value as unknown as Node,
+                const newNode = transform!.call(this, value),
                     { parentNode } = node;
                 if (parentNode) {
                     parentNode.replaceChild(newNode, node);
