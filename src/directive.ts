@@ -59,6 +59,16 @@ export interface Listeners {
     [event: string]: EventListener | [EventListener, EventListenerOptions | boolean];
 }
 
+export const addEventListeners = (eventTarget: EventTarget, listeners: Listeners) => {
+    _iterate(listeners, (listener, event) => {
+        if (typeof listener === 'function') {
+            eventTarget.addEventListener(event, listener);
+        } else {
+            eventTarget.addEventListener(event, listener[0], listener[1]);
+        }
+    });
+};
+
 export const directives = new Map<string | symbol, DirectiveSetter>([
     ['bind', (element, value: Value) => {
         bind(element as InputElement, value);
@@ -67,12 +77,6 @@ export const directives = new Map<string | symbol, DirectiveSetter>([
         bindSync(element as InputElement, value);
     }],
     ['listeners', (element, listeners: Listeners) => {
-        _iterate(listeners, (listener, event) => {
-            if (typeof listener === 'function') {
-                element.addEventListener(event, listener);
-            } else {
-                element.addEventListener(event, listener[0], listener[1]);
-            }
-        });
+        addEventListeners(element, listeners);
     }],
 ]);
