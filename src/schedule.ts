@@ -11,14 +11,14 @@ export type Ticker = (callback: () => void) => void;
 export let tick: Ticker = requestAnimationFrame,
     tickLimit = 13;
 
-const _update = () => {
+export const update = () => {
     const deadline = _now() + tickLimit;
     for (let i = 0; i < _schedule.length; i++) {
         _schedule[i]!();
         _schedule[i] = _null;
         if (deadline < _now()) {
             _removeStart(_schedule, i + 1);
-            return tick(_update);
+            return tick(update);
         }
     }
     _schedule.length = 0;
@@ -31,7 +31,7 @@ export const addSchedule = (callback: ScheduleCallback) => {
     }
     if (!_willTick) {
         _willTick = true;
-        tick(_update);
+        tick(update);
     }
 };
 
