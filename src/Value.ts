@@ -255,10 +255,10 @@ export class Value<T = unknown> {
         return this;
     }
 
-    map<U = unknown>(callback: (value: T) => U) {
+    map<U = unknown>(callback: (this: this, value: T) => U) {
         return this.get().then(current => {
-            const newValue = new Value<U>(callback(current)),
-                listener = (value: T) => { newValue.set(() => callback(value)); },
+            const newValue = new Value<U>(callback.call(this, current)),
+                listener = (value: T) => { newValue.set(() => callback.call(this, value)); },
                 { _listeners } = this;
             if (this.active) {
                 _listeners.push(listener);
@@ -270,9 +270,9 @@ export class Value<T = unknown> {
         });
     }
 
-    mapSync<U = unknown>(callback: (value: T) => U) {
-        const newValue = new Value<U>(callback(this._current)),
-            listener = (value: T) => { newValue.setSync(callback(value)); },
+    mapSync<U = unknown>(callback: (this: this, value: T) => U) {
+        const newValue = new Value<U>(callback.call(this, this._current)),
+            listener = (value: T) => { newValue.setSync(callback.call(this, value)); },
             { _listeners } = this;
         if (this.active) {
             _listeners.push(listener);
@@ -283,24 +283,24 @@ export class Value<T = unknown> {
         return newValue;
     }
 
-    toTextNode(transform?: (value: T) => string) {
+    toTextNode(transform?: (this: this, value: T) => string) {
         const { _current } = this,
             textNode = _document.createTextNode(
-                transform ? transform(_current) : _current as unknown as string
+                transform ? transform.call(this, _current) : _current as unknown as string
             );
         if (this.active) {
             this._listeners.push(value => {
-                textNode.data = transform ? transform(value) : value as unknown as string;
+                textNode.data = transform ? transform.call(this, value) : value as unknown as string;
             });
         }
         return textNode;
     }
 
-    toNode(transform: (value: T) => Node) {
-        let node = transform(this._current);
+    toNode(transform: (this: this, value: T) => Node) {
+        let node = transform.call(this, this._current);
         if (this.active) {
             this._listeners.push(value => {
-                const newNode = transform(value),
+                const newNode = transform.call(this, value),
                     { parentNode } = node;
                 if (parentNode) {
                     parentNode.replaceChild(newNode, node);
