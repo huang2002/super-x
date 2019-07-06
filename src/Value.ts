@@ -300,11 +300,12 @@ export class Value<T = unknown> {
         return textNode;
     }
 
-    toNode(transform: (this: this, value: T) => Node) {
-        let node = transform.call(this, this._current);
+    toNode(transform?: (this: this, value: T) => Node) {
+        const { _current } = this;
+        let node = transform ? transform.call(this, _current) : _current as unknown as Node;
         if (this.active) {
             this._listeners.push(value => {
-                const newNode = transform.call(this, value),
+                const newNode = transform ? transform.call(this, value) : value as unknown as Node,
                     { parentNode } = node;
                 if (parentNode) {
                     parentNode.replaceChild(newNode, node);
