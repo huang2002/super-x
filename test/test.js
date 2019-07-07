@@ -63,8 +63,8 @@ function LabelledInput(id, label, inputOptions) {
     ];
 }
 
-document.body.appendChild(
-    X.createFragment([
+function TitleTest() {
+    return X.createFragment([
         h('h1', { id: 'title', style: X.Value.joinSync(['color', title.color], ':') }, title.content),
         LabelledInput('title-content-input', 'title content', {
             bind: title.content,
@@ -81,7 +81,7 @@ document.body.appendChild(
         LabelledInput('title-color-input', 'title color', { bindSync: title.color }),
         h('br'),
         LabelledInput('input-width-input', 'input width', {
-            class: '',
+            class: [],
             'data-value': inputWidth,
             bind: inputWidth,
             type: 'range',
@@ -89,5 +89,42 @@ document.body.appendChild(
             min: 6
         }),
         ' (em)'
-    ])
+    ]);
+}
+
+function TextareaTest() {
+    return [
+        'Textarea Test'
+    ];
+}
+
+/** @type {X.Value<'title' | 'textarea'>} */
+const router = X.Value.of('title');
+
+// TODO: rm temp var `route`
+let route;
+
+X.appendChildren(
+    document.body, [
+        X.createElement('div', null,
+            route = X.createRouter(router, {
+                title: TitleTest,
+                textarea: TextareaTest
+            })
+        ),
+        X.createElement('div', null,
+            'Select test:　',
+            X.createElement('select', {
+                bind: router,
+                listeners: {
+                    change: function () {
+                        console.log('test changed');
+                    }
+                }
+            },
+                X.createElement('option', { value: 'title' }, 'Title Test'),
+                X.createElement('option', { value: 'textarea' }, 'Textarea Test')
+            )
+        )
+    ]
 );
