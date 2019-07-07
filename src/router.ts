@@ -1,4 +1,5 @@
 import { Value } from "./Value";
+import { _toArray, _normalizeNodes } from "./utils";
 
 export type RouteMap<T extends string = string> = Record<T, (router: Value<T>) => any>;
 
@@ -16,7 +17,7 @@ export const createRouter = <T extends RouteMap = RouteMap>(
         if (routes.has(routeName)) {
             return routes.get(routeName);
         } else {
-            const route = routeMap[routeName](router as unknown as Value<string>);
+            const route = _normalizeNodes(_toArray(routeMap[routeName](router as unknown as Value<string>)));
             routes.set(routeName, route);
             return route;
         }

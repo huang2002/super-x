@@ -1,7 +1,7 @@
-import { _removeIndex, _iterate } from "./utils";
-import { _undefined, _document, _Object, _Array, _Promise } from "./references";
+import { _removeIndex, _iterate, _toArray, _normalizeNodes } from "./utils";
+import { _undefined, _document, _Object, _Array, _Promise, _Infinity } from "./references";
 import { addSchedule, removeSchedule } from "./schedule";
-import { toNode } from "./element";
+import { toNode, replaceChildren } from "./element";
 
 export type ValueListener<T = unknown> = (this: Value<T>, newValue: T, oldValue: T) => void;
 export type ValueGetCallback<T = unknown> = (value: T) => void;
@@ -134,6 +134,10 @@ export class Value<T = unknown> {
 
     static joinSync(components: any[], separator?: string) {
         return this.composeSync(components, fragments => fragments.join(separator || ''));
+    }
+
+    static defaultNodeTransform(value: any) {
+        return _Array.isArray(value) ? value.flat(_Infinity).map(toNode) : toNode(value);
     }
 
     constructor(initialValue: T) {
@@ -301,21 +305,21 @@ export class Value<T = unknown> {
         return textNode;
     }
 
-    toNode(transform?: (this: this, value: T) => Node) {
-        transform = transform || toNode;
+    toNodes(transform?: (this: this, value: T) => Node | Node[]): Node[] {
+        transform = transform || Value.defaultNodeTransform;
         const { _current } = this;
-        let node = transform.call(this, _current);
+        let nodes = _normalizeNodes(_toArray(transform.call(this, _current)));
         if (this.active) {
             this._listeners.push(value => {
-                const newNode = transform!.call(this, value),
-                    { parentNode } = node;
+                const newNodes = _normalizeNodes(_toArray(transform!.call(this, value))),
+                    parentNode = (nodes as Node[]).length && (nodes as Node[])[0].parentNode;
                 if (parentNode) {
-                    parentNode.replaceChild(newNode, node);
-                    node = newNode;
+                    replaceChildren(parentNode, newNodes, nodes);
+                    nodes = newNodes;
                 }
             });
         }
-        return node;
+        return nodes;
     }
 
 }
