@@ -93,8 +93,14 @@ function TitleTest() {
 }
 
 function TextareaTest() {
+    const content = X.Value.of('<h1>Textarea Test</h1>');
     return [
-        'Textarea Test'
+        h('div', { html: content }),
+        h('textarea', {
+            cols: 50,
+            rows: 15,
+            bind: content
+        })
     ];
 }
 
@@ -109,7 +115,10 @@ X.appendChildren(
                 textarea: TextareaTest
             })
         ),
-        X.createElement('div', null,
+        X.createElement('div',
+            {
+                style: 'margin-top: 1em;'
+            },
             'Select test:　',
             X.createElement('select', {
                 bind: router,
