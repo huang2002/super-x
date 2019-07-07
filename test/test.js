@@ -101,13 +101,10 @@ function TextareaTest() {
 /** @type {X.Value<'title' | 'textarea'>} */
 const router = X.Value.of('title');
 
-// TODO: rm temp var `route`
-let route;
-
 X.appendChildren(
     document.body, [
         X.createElement('div', null,
-            route = X.createRouter(router, {
+            X.createRouter(router, {
                 title: TitleTest,
                 textarea: TextareaTest
             })
