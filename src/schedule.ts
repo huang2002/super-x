@@ -16,7 +16,7 @@ export const update = () => {
     for (let i = 0; i < _schedule.length; i++) {
         _schedule[i]!();
         _schedule[i] = _null;
-        if (deadline < _now()) {
+        if (i < _schedule.length - 1 && deadline < _now()) {
             _removeStart(_schedule, i + 1);
             return tick(update);
         }
