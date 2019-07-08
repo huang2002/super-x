@@ -2,6 +2,7 @@ import { _Boolean, _Array, _Object } from "./references";
 import { Value } from "./Value";
 import { directives } from "./directive";
 import { _isString, _iterate } from "./utils";
+import { StyleProperties } from "./style";
 
 export type AttributeSetter = (element: Element, value: any) => void;
 
@@ -14,6 +15,30 @@ export const updateVersion = (element: Element, attributeName: string) => {
 const _VERSION_PREFIX = 'data-x-version-';
 
 export const attributeSetters = new Map<string | symbol, AttributeSetter>([
+    ['style', (element, style: string | StyleProperties) => {
+        if (_isString(style)) {
+            element.setAttribute('style', style);
+        } else {
+            const { style: eleStyle } = element as HTMLElement;
+            _iterate(style, (value, name) => {
+                if (_isString(value)) {
+                    (eleStyle as any)[name] = value;
+                } else {
+                    const versionName = `${_VERSION_PREFIX}style-${name}`,
+                        version = updateVersion(element, versionName),
+                        listener = (value: unknown) => {
+                            if (element.getAttribute(versionName) === version) {
+                                (eleStyle as any)[name] = value;
+                            } else {
+                                (value as Value).removeListener(listener);
+                            }
+                        };
+                    (value as Value).addListener(listener);
+                    (eleStyle as any)[name] = (value as Value).getSync();
+                }
+            });
+        }
+    }],
     ['class', (element, classList: string | object | unknown[]) => {
         if (classList && typeof classList === 'object') {
             element.setAttribute('class',
