@@ -5,6 +5,14 @@ import { _isString, _iterate } from "./utils";
 
 export type AttributeSetter = (element: Element, value: any) => void;
 
+export const VERSION_ATTRIBUTE = 'data-x-version';
+
+export const updateVersion = (element: Element) => {
+    const newVersion = +element.getAttribute(VERSION_ATTRIBUTE)! + 1 + '';
+    element.setAttribute(VERSION_ATTRIBUTE, newVersion);
+    return newVersion;
+};
+
 export const attributeSetters = new Map<string | symbol, AttributeSetter>([
     ['class', (element, classList: string | object | unknown[]) => {
         if (classList && typeof classList === 'object') {
@@ -25,22 +33,19 @@ export const attributeSetters = new Map<string | symbol, AttributeSetter>([
     }],
 ]);
 
-export const VERSION_ATTRIBUTE = 'data-x-version';
-
 export const setAttribute = (element: Element, name: string | symbol, value: any) => {
     if (directives.has(name)) {
         directives.get(name)!(element, value);
     } else {
         if (value && value._isXV) {
-            const version = +element.getAttribute(VERSION_ATTRIBUTE)! + 1 + '';
-            element.setAttribute(VERSION_ATTRIBUTE, version);
-            const listener = (value: unknown) => {
-                if (element.getAttribute(VERSION_ATTRIBUTE) === version) {
-                    setAttribute(element, name, value);
-                } else {
-                    (value as Value).removeListener(listener);
-                }
-            };
+            const version = updateVersion(element),
+                listener = (value: unknown) => {
+                    if (element.getAttribute(VERSION_ATTRIBUTE) === version) {
+                        setAttribute(element, name, value);
+                    } else {
+                        (value as Value).removeListener(listener);
+                    }
+                };
             (value as Value).addListener(listener);
             value = (value as Value).getSync();
         }
