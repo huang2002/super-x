@@ -4,6 +4,7 @@ export const _document = document,
     _Infinity = Infinity,
     { now: _now } = Date,
     _Promise = Promise,
+    _Math = Math,
     _Boolean = Boolean,
     _Object = Object,
     _Array = Array;
