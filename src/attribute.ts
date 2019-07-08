@@ -5,13 +5,13 @@ import { _isString, _iterate } from "./utils";
 
 export type AttributeSetter = (element: Element, value: any) => void;
 
-export const VERSION_ATTRIBUTE = 'data-x-version';
-
-export const updateVersion = (element: Element) => {
-    const newVersion = +element.getAttribute(VERSION_ATTRIBUTE)! + 1 + '';
-    element.setAttribute(VERSION_ATTRIBUTE, newVersion);
+export const updateVersion = (element: Element, attributeName: string) => {
+    const newVersion = +element.getAttribute(attributeName)! + 1 + '';
+    element.setAttribute(attributeName, newVersion);
     return newVersion;
 };
+
+const _VERSION_PREFIX = 'data-x-version-';
 
 export const attributeSetters = new Map<string | symbol, AttributeSetter>([
     ['class', (element, classList: string | object | unknown[]) => {
@@ -33,14 +33,15 @@ export const attributeSetters = new Map<string | symbol, AttributeSetter>([
     }],
 ]);
 
-export const setAttribute = (element: Element, name: string | symbol, value: any) => {
+export const setAttribute = (element: Element, name: string, value: any) => {
     if (directives.has(name)) {
         directives.get(name)!(element, value);
     } else {
         if (value && value._isXV) {
-            const version = updateVersion(element),
+            const versionName = _VERSION_PREFIX + name,
+                version = updateVersion(element, versionName),
                 listener = (value: unknown) => {
-                    if (element.getAttribute(VERSION_ATTRIBUTE) === version) {
+                    if (element.getAttribute(versionName) === version) {
                         setAttribute(element, name, value);
                     } else {
                         (value as Value).removeListener(listener);
