@@ -5,7 +5,7 @@ const h = X.createElement;
 
 const title = X.Value.wrap({
     content: 'Hello, world!',
-    color: '#000'
+    color: '#000000'
 });
 
 const LABEL_CLASS = X.createClass({
@@ -83,7 +83,11 @@ function TitleTest() {
             }
         }),
         h('br'),
-        LabelledInput('title-color-input', 'title color', { bindSync: title.color }),
+        LabelledInput('title-color-input', 'title color', {
+            class: '',
+            type: 'color',
+            bindSync: title.color
+        }),
         h('br'),
         LabelledInput('input-width-input', 'input width', {
             class: [],
