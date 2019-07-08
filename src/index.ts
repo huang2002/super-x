@@ -5,3 +5,4 @@ export * from "./element";
 export * from "./directive";
 export * from "./style";
 export * from "./router";
+export * from "./Timing";
