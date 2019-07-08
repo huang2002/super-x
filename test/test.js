@@ -20,7 +20,7 @@ const inputWidth = X.Value.of(10);
 
 const INPUT_CLASS = X.createClass({
     _: {
-        width: inputWidth.mapSync(function (n) { return n + 'em'; }),
+        width: X.Value.joinSync([inputWidth, 'em']),
         padding: '.2em .4em',
         border: 'solid 1px #666',
         'border-radius': '3px'
@@ -65,7 +65,12 @@ function LabelledInput(id, label, inputOptions) {
 
 function TitleTest() {
     return X.createFragment([
-        h('h1', { id: 'title', style: X.Value.joinSync(['color', title.color], ':') }, title.content),
+        h('h1', {
+            id: 'title',
+            style: {
+                color: title.color
+            }
+        }, title.content),
         LabelledInput('title-content-input', 'title content', {
             bind: title.content,
             listeners: {
