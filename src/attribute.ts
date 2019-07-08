@@ -25,14 +25,23 @@ export const attributeSetters = new Map<string | symbol, AttributeSetter>([
     }],
 ]);
 
+export const VERSION_ATTRIBUTE = 'data-x-version';
+
 export const setAttribute = (element: Element, name: string | symbol, value: any) => {
     if (directives.has(name)) {
         directives.get(name)!(element, value);
     } else {
         if (value && value._isXV) {
-            (value as Value).addListener(value => {
-                setAttribute(element, name, value);
-            });
+            const version = +element.getAttribute(VERSION_ATTRIBUTE)! + 1 + '';
+            element.setAttribute(VERSION_ATTRIBUTE, version);
+            const listener = (value: unknown) => {
+                if (element.getAttribute(VERSION_ATTRIBUTE) === version) {
+                    setAttribute(element, name, value);
+                } else {
+                    (value as Value).removeListener(listener);
+                }
+            };
+            (value as Value).addListener(listener);
             value = (value as Value).getSync();
         }
         if (attributeSetters.has(name)) {
