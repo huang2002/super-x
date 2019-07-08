@@ -1,7 +1,7 @@
 import { _document, _Array, _Infinity, _null } from "./references";
 import { setAttributes } from "./attribute";
 import { Value } from "./Value";
-import { ElementType, _isString } from "./utils";
+import { ElementType } from "./utils";
 
 const _fragment = _document.createDocumentFragment();
 
