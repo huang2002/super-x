@@ -3,12 +3,6 @@ import { _undefined, _document, _Object, _Array, _Promise, _Infinity } from "./r
 import { addSchedule, removeSchedule } from "./schedule";
 import { toNode, replaceChildren } from "./element";
 
-export type ValueListener<T = unknown> = (this: Value<T>, newValue: T, oldValue: T) => void;
-export type ValueGetCallback<T = unknown> = (value: T) => void;
-export type ValueSetCallback<T = unknown> = (oldValue: T) => T;
-export type ValueDestroyCallback = () => void;
-export type ValueComposer<T extends {} = any, U = unknown> = (this: void, arg: UnwrapValue<T>) => U;
-
 export type WrapValue<T extends {} = any> = {
     [K in keyof T]: T[K] extends Value<any> ? T[K] : Value<T[K]>;
 };
@@ -16,6 +10,12 @@ export type WrapValue<T extends {} = any> = {
 export type UnwrapValue<T = any> = {
     [K in keyof T]: T[K] extends Value<infer U> ? U : T[K];
 };
+
+export type ValueListener<T = unknown> = (this: Value<T>, newValue: T, oldValue: T) => void;
+export type ValueGetCallback<T = unknown> = (value: T) => void;
+export type ValueSetCallback<T = unknown> = (oldValue: T) => T;
+export type ValueDestroyCallback = () => void;
+export type ValueComposer<T extends {} = any, U = unknown> = (this: void, arg: UnwrapValue<T>) => U;
 
 export class Value<T = unknown> {
 
