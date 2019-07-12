@@ -21,35 +21,35 @@ export const toNode = (value: any) => {
     }
 };
 
-export const appendChild = (node: Node, childNode: any) => {
+export const appendChild = (parentNode: Node, childNode: any) => {
     if (childNode && childNode._isXV) {
         childNode = (childNode as Value<Node>).toNodes();
     }
     if (_Array.isArray(childNode)) {
-        appendChildren(node, childNode);
+        appendChildren(parentNode, childNode);
     } else {
-        node.appendChild(toNode(childNode));
+        parentNode.appendChild(toNode(childNode));
     }
-    return node;
+    return parentNode;
 };
 
-export const appendChildren = (node: Node, childNodes: any[]) => {
+export const appendChildren = (parentNode: Node, childNodes: any[]) => {
     childNodes.flat(_Infinity).forEach(childNode => {
-        appendChild(node, childNode);
+        appendChild(parentNode, childNode);
     });
-    return node;
+    return parentNode;
 };
 
-export const replaceChildren = (node: Node, newNodes: Node[], oldNodes: Node[]) => {
+export const replaceChildren = (parentNode: Node, newNodes: Node[], oldNodes: Node[]) => {
     const lastIndex = oldNodes.length - 1;
     oldNodes.forEach((oldNode, i) => {
         if (i < lastIndex) {
-            node.removeChild(oldNode);
+            parentNode.removeChild(oldNode);
         } else {
-            node.replaceChild(appendChildren(_fragment, newNodes), oldNode);
+            parentNode.replaceChild(appendChildren(_fragment, newNodes), oldNode);
         }
     });
-    return node;
+    return parentNode;
 };
 
 export const createElement = <T extends string>(
