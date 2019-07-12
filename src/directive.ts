@@ -6,8 +6,7 @@ export interface InputElement extends Element {
     value: string;
 }
 
-export type DirectiveSetter = (element: Element, value: any) => void;
-
+export type DirectiveHandler = (element: Element, value: any) => void;
 
 export let getInputEvent = (element: InputElement): string =>
     (element.tagName === 'INPUT' && element.getAttribute('type') === 'range' ||
@@ -71,7 +70,7 @@ export const addEventListeners = (eventTarget: EventTarget, listeners: Listeners
     });
 };
 
-export const directives = new Map<string | symbol, DirectiveSetter>([
+export const directives = new Map<string | symbol, DirectiveHandler>([
     ['bind', (element, value: Value) => {
         bind(element as InputElement, value);
     }],
