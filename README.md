@@ -4,7 +4,15 @@
 
 ## Introduction
 
-`hyper-x` is a lightweight front-end lib that helps you create reactive UIs easily.
+`hyper-x` is a front-end lib that helps you create reactive UIs easily by providing many helpers to deal with
+
+- element manipulation
+- custom attributes and directives
+- view routing
+- component styling
+- ...
+
+and is rather lightweight. (LESS than 10KB after minification WITHOUT zipping)
 
 ## Links
 
