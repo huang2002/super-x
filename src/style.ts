@@ -15,9 +15,11 @@ let _styleCount = 0;
 
 export let defaultClassPlaceholder = /_/g;
 
+export type StyleContent = (string | Value<string>)[];
+
 export interface StyleContentCreator {
-    (style: Style, placeholder: RegExp, className: string): (string | Value<string>)[];
-    (style: Style): (string | Value<string>)[];
+    (style: Style, placeholder: RegExp, className: string): StyleContent;
+    (style: Style): StyleContent;
 }
 
 export const createStyleContent: StyleContentCreator = function (
