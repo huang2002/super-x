@@ -11,14 +11,14 @@ export default [
         output: {
             format: 'umd',
             name: 'X',
-            file: 'dist/hyper-x.umd.js'
+            file: 'dist/super-x.umd.js'
         }
     },
     {
         input,
         output: {
             format: 'esm',
-            file: 'dist/hyper-x.js'
+            file: 'dist/super-x.js'
         }
     }
 ];

@@ -1,10 +1,10 @@
-# hyper-x
+# super-x
 
 > A lightweight front-end lib.
 
 ## Introduction
 
-`hyper-x` is a front-end lib that helps you create reactive UIs easily by providing many helpers to deal with
+`super-x` is a front-end lib that helps you create reactive UIs easily by providing many helpers to deal with
 
 - reactive binding
 - element manipulation
@@ -17,7 +17,7 @@ and is rather lightweight. (LESS than 10KB after minification WITHOUT zipping)
 
 ## Links
 
-- [Documentation](https://github.com/huang2002/hyper-x/wiki)
+- [Documentation](https://github.com/huang2002/super-x/wiki)
 - [Contributing Guide](./CONTRIBUTING.md)
 - [Changelog](./CHANGELOG.md)
 - [License (MIT)](./LICENSE)

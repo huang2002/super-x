@@ -1,24 +1,24 @@
 {
-    "name": "hyper-x",
+    "name": "super-x",
     "description": "A lightweight front-end lib.",
     "version": "0.1.0",
-    "main": "dist/hyper-x.umd.min.js",
-    "module": "dist/hyper-x.min.js",
+    "main": "dist/super-x.umd.min.js",
+    "module": "dist/super-x.min.js",
     "types": "index.d.ts",
     "scripts": {
         "prebuild": "tsc",
         "build": "rollup -c",
-        "postbuild": "terser dist/hyper-x.js --config-file terser.json --module -o dist/hyper-x.min.js && terser dist/hyper-x.umd.js --config-file terser.json -o dist/hyper-x.umd.min.js && node stat"
+        "postbuild": "terser dist/super-x.js --config-file terser.json --module -o dist/super-x.min.js && terser dist/super-x.umd.js --config-file terser.json -o dist/super-x.umd.min.js && node stat"
     },
     "license": "MIT",
     "author": "3h",
-    "repository": "huang2002/hyper-x",
+    "repository": "huang2002/super-x",
     "bugs": {
-        "url": "https://github.com/huang2002/hyper-x/issues"
+        "url": "https://github.com/huang2002/super-x/issues"
     },
-    "homepage": "https://github.com/huang2002/hyper-x#readme",
+    "homepage": "https://github.com/huang2002/super-x#readme",
     "keywords": [
-        "hyper-x",
+        "super-x",
         "x",
         "lightweight",
         "front-end",
