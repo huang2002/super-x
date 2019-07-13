@@ -6,6 +6,7 @@
 
 `hyper-x` is a front-end lib that helps you create reactive UIs easily by providing many helpers to deal with
 
+- reactive binding
 - element manipulation
 - custom attributes and directives
 - view routing
