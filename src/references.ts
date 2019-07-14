@@ -9,3 +9,5 @@ export const _document = document,
     _Object = Object,
     _Array = Array,
     _Node = Node;
+
+export const _fragment = _document.createDocumentFragment();
