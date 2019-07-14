@@ -63,10 +63,10 @@ export const _toArray = <T>(value: T): (T extends any[] ? T : [T]) => {
 
 const FRAGMENT_TYPE = _document.DOCUMENT_FRAGMENT_NODE;
 
-export const _normalizeNodes = (nodes: Node[], noFlat?: boolean): Node[] => {
+export const _normalize = (nodes: Node[], noFlat?: boolean): Node[] => {
     const result = nodes.map(
         node => node.nodeType === FRAGMENT_TYPE ?
-            _normalizeNodes(_Array.from(node.childNodes), true) :
+            _normalize(_Array.from(node.childNodes), true) :
             node
     );
     return noFlat ? result : result.flat(_Infinity);
