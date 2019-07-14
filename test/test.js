@@ -113,21 +113,42 @@ function TextareaTest() {
     ];
 }
 
-/** @type {X.Value<'title' | 'textarea'>} */
-const router = X.Value.of('title');
+function AsyncTest() {
+    return [
+        h('p', null, 'test0:　',
+            X.createPlaceholder(
+                new Promise(function (resolve) {
+                    setTimeout(resolve, 1000, 'success');
+                }),
+                'pending'
+            )
+        ),
+        h('p', null, 'test1:　',
+            X.createPlaceholder(
+                new Promise(function (resolve, reject) {
+                    setTimeout(reject, 2000, 'none');
+                }),
+                'pending',
+                function (reason) {
+                    return 'failure (reason:' + reason + ')';
+                }
+            )
+        )
+    ];
+}
+
+/** @type {X.Value<'title' | 'textarea' | 'async'>} */
+const router = X.Value.of('title'),
+    routes = {
+        title: TitleTest,
+        textarea: TextareaTest,
+        async: AsyncTest
+    };
 
 X.appendChildren(
     document.body, [
-        X.createElement('div', null,
-            X.createRouter(router, {
-                title: TitleTest,
-                textarea: TextareaTest
-            })
-        ),
-        X.createElement('div',
-            {
-                style: 'margin-top: 1em;'
-            },
+        X.createElement('div', null, X.createRouter(router, routes)),
+        X.createElement('div', { style: 'margin-top: 1em;' },
             'Select test:　',
             X.createElement('select', {
                 bind: router,
@@ -136,10 +157,9 @@ X.appendChildren(
                         console.log('test changed');
                     }
                 }
-            },
-                X.createElement('option', { value: 'title' }, 'Title Test'),
-                X.createElement('option', { value: 'textarea' }, 'Textarea Test')
-            )
+            }, Object.keys(routes).map(function (name) {
+                return h('option', { value: name }, name + ' test');
+            }))
         )
     ]
 );
