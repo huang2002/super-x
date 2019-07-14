@@ -66,3 +66,15 @@ export const createElement = <T extends string>(
     }
     return element as ElementType<T>;
 };
+
+export const createPlaceholder = (
+    promise: PromiseLike<any>, loadingMsg?: unknown, onRejected?: (reason: unknown) => unknown
+) => {
+    const value = Value.of(loadingMsg);
+    promise.then(result => {
+        value.setSync(result);
+    }, reason => {
+        value.setSync(onRejected && onRejected(reason));
+    });
+    return value.toNodes();
+};
