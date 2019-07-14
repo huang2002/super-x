@@ -1,4 +1,4 @@
-import { _document, _Array, _Infinity, _null } from "./references";
+import { _document, _Array, _Infinity, _null, _Node, _Promise } from "./references";
 import { setAttributes } from "./attribute";
 import { Value } from "./Value";
 import { ElementType } from "./utils";
@@ -14,7 +14,7 @@ export const createFragment = (nodes: any[]) => {
 export const toNode = (value: any) => {
     if (typeof value === 'boolean' || value == _null) {
         return _document.createTextNode('');
-    } else if (value instanceof Node) {
+    } else if (value instanceof _Node) {
         return value;
     } else {
         return _document.createTextNode(value);

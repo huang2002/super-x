@@ -7,4 +7,5 @@ export const _document = document,
     _Math = Math,
     _Boolean = Boolean,
     _Object = Object,
-    _Array = Array;
+    _Array = Array,
+    _Node = Node;
