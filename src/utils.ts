@@ -38,6 +38,14 @@ export const _replace = (array: unknown[], newElements: unknown[], oldElements: 
     }
 };
 
+export const _copy = (target: unknown[], source: unknown[]) => {
+    const { length } = source;
+    target.length = length;
+    for (let i = 0; i < length; i++) {
+        target[i] = source[i];
+    }
+};
+
 export const _isString = (value: unknown): value is string => typeof value === 'string';
 
 export const _iterate = <T>(
