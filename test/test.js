@@ -115,24 +115,23 @@ function TextareaTest() {
 
 function AsyncTest() {
     return [
-        h('p', null, 'test0:　',
-            X.createPlaceholder(
-                new Promise(function (resolve) {
-                    setTimeout(resolve, 1000, 'success');
-                }),
-                'pending'
-            )
+        'test0:　',
+        X.createPlaceholder(
+            new Promise(function (resolve) {
+                setTimeout(resolve, 1000, 'success');
+            }),
+            'pending'
         ),
-        h('p', null, 'test1:　',
-            X.createPlaceholder(
-                new Promise(function (resolve, reject) {
-                    setTimeout(reject, 2000, 'none');
-                }),
-                'pending',
-                function (reason) {
-                    return 'failure (reason:' + reason + ')';
-                }
-            )
+        h('br'),
+        'test1:　',
+        X.createPlaceholder(
+            new Promise(function (resolve, reject) {
+                setTimeout(reject, 2000, 'none');
+            }),
+            'pending',
+            function (reason) {
+                return 'failure (reason:' + reason + ')';
+            }
         )
     ];
 }
