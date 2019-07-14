@@ -22,18 +22,18 @@ export class Value<T = unknown> {
     static compare = _Object.is;
 
     static of<T>(initialValue: T) {
-        return new this(initialValue);
+        return new Value(initialValue);
     }
 
     static wrap<T extends {} = any>(values: T): WrapValue<T> {
         if (_Array.isArray(values)) {
             return values.map(
-                value => (value && value._isXV) ? value : new this(value)
+                value => (value && value._isXV) ? value : new Value(value)
             ) as unknown as WrapValue<T>;
         } else {
             const result = {} as WrapValue<T>;
             _iterate(values as { [key: string]: any; }, (value, key) => {
-                (result as any)[key] = (value && value._isXV) ? value : new this(value);
+                (result as any)[key] = (value && value._isXV) ? value : new Value(value);
             });
             return result;
         }
@@ -77,11 +77,11 @@ export class Value<T = unknown> {
     static compose<T extends {} = any, U = unknown>(
         components: T, composer: ValueComposer<T, U>
     ) {
-        return this.unwrap(components).then(currentValues => {
+        return Value.unwrap(components).then(currentValues => {
             const newValue = new Value<U>(
                 composer.call(_undefined, currentValues)
             ), listener = () => {
-                this.unwrap(components).then(newValues => {
+                Value.unwrap(components).then(newValues => {
                     newValue.set(() => composer.call(_undefined, newValues));
                 });
             };
@@ -107,9 +107,9 @@ export class Value<T = unknown> {
         components: T, composer: ValueComposer<T, U>
     ) {
         const newValue = new Value<U>(
-            composer.call(_undefined, this.unwrapSync(components))
+            composer.call(_undefined, Value.unwrapSync(components))
         ), listener = () => {
-            newValue.setSync(composer.call(_undefined, this.unwrapSync(components)));
+            newValue.setSync(composer.call(_undefined, Value.unwrapSync(components)));
         };
         const componentArray = _Array.isArray(components) ? components : _Object.values(components),
             values = new Array<Value>();
@@ -129,15 +129,20 @@ export class Value<T = unknown> {
     }
 
     static join(components: any[], separator?: string) {
-        return this.compose(components, fragments => fragments.join(separator || ''));
+        return Value.compose(components, fragments => fragments.join(separator || ''));
     }
 
     static joinSync(components: any[], separator?: string) {
-        return this.composeSync(components, fragments => fragments.join(separator || ''));
+        return Value.composeSync(components, fragments => fragments.join(separator || ''));
     }
 
-    static defaultNodeTransform(value: any) {
-        return _Array.isArray(value) ? value.flat(_Infinity).map(toNode) : toNode(value);
+    static defaultNodeTransform(value: any): Node | Node[] {
+        if (value && value._isXV) {
+            value = (value as Value<any>).toNodes();
+        }
+        return _Array.isArray(value) ?
+            value.flat(_Infinity).map(Value.defaultNodeTransform) as Node[] :
+            toNode(value);
     }
 
     constructor(initialValue: T) {
