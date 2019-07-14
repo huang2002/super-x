@@ -18,6 +18,26 @@ export const _removeStart = (array: unknown[], count: number) => {
     array.length -= count;
 };
 
+export const _replace = (array: unknown[], newElements: unknown[], oldElements: unknown[]) => {
+    const index = array.indexOf(oldElements[0]);
+    if (~index) {
+        const { length: oldLength } = array,
+            { length: newCount } = newElements,
+            { length: oldCount } = oldElements,
+            deltaCount = newCount - oldCount;
+        let i;
+        for (i = index + oldCount; i < oldLength; i++) {
+            array[i + deltaCount] = array[i];
+        }
+        if (deltaCount < 0) {
+            array.length += deltaCount;
+        }
+        for (i = 0; i < newCount; i++) {
+            array[index + i] = newElements[i];
+        }
+    }
+};
+
 export const _isString = (value: unknown): value is string => typeof value === 'string';
 
 export const _iterate = <T>(
