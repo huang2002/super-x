@@ -21,7 +21,7 @@ export const toNode = (value: any) => {
 
 export const appendChild = (parentNode: Node, childNode: any) => {
     if (childNode && childNode._isXV) {
-        childNode = (childNode as Value<Node>).toNodes();
+        childNode = (childNode as Value<Node>).toNodes(parentNode);
     }
     if (_Array.isArray(childNode)) {
         appendChildren(parentNode, childNode);

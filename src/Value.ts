@@ -1,5 +1,5 @@
-import { _removeIndex, _iterate, _toArray, _normalizeNodes } from "./utils";
-import { _undefined, _document, _Object, _Array, _Promise, _Infinity } from "./references";
+import { _removeIndex, _iterate, _toArray, _normalize, _replace, _copy } from "./utils";
+import { _undefined, _document, _Object, _Array, _Promise, _Infinity, _null } from "./references";
 import { addSchedule, removeSchedule } from "./schedule";
 import { toNode, replaceChildren } from "./element";
 
@@ -16,6 +16,8 @@ export type ValueGetCallback<T = unknown> = (value: T) => void;
 export type ValueSetCallback<T = unknown> = (oldValue: T) => T;
 export type ValueDestroyCallback = () => void;
 export type ValueComposer<T extends {} = any, U = unknown> = (this: void, arg: UnwrapValue<T>) => U;
+export type ValueToNodesCallback<T = unknown> =
+    (this: Value<T>, value: T, parentNode: Node, record?: Node[]) => Node | Node[];
 
 export class Value<T = unknown> {
 
@@ -136,13 +138,16 @@ export class Value<T = unknown> {
         return Value.composeSync(components, fragments => fragments.join(separator || ''));
     }
 
-    static defaultNodeTransform(value: any): Node | Node[] {
-        if (value && value._isXV) {
-            value = (value as Value<any>).toNodes();
+    static defaultNodeTransform: ValueToNodesCallback = function (value, parentNode, record) {
+        if (value && (value as any)._isXV) {
+            value = (value as Value<any>).toNodes(parentNode, _null, record);
         }
-        return _Array.isArray(value) ?
-            value.flat(_Infinity).map(Value.defaultNodeTransform) as Node[] :
-            toNode(value);
+        if (_Array.isArray(value)) {
+            const { defaultNodeTransform } = Value;
+            return value.flatMap(v => defaultNodeTransform.call(this, v, parentNode, record));
+        } else {
+            return toNode(value);
+        }
     }
 
     constructor(initialValue: T) {
@@ -310,18 +315,20 @@ export class Value<T = unknown> {
         return textNode;
     }
 
-    toNodes(transform?: (this: this, value: T) => Node | Node[]): Node[] {
-        transform = transform || Value.defaultNodeTransform;
+    toNodes(parentNode: Node, transform?: ValueToNodesCallback<T> | null, record?: Node[]): Node[] {
+        transform = transform || Value.defaultNodeTransform as ValueToNodesCallback<T>;
         const { _current } = this;
-        let nodes = _normalizeNodes(_toArray(transform.call(this, _current)));
+        let nodes = [] as Node[];
+        _copy(nodes, _normalize(_toArray(transform.call(this, _current, parentNode, nodes))));
         if (this.active) {
             this._listeners.push(value => {
-                const newNodes = _normalizeNodes(_toArray(transform!.call(this, value))),
-                    parentNode = (nodes as Node[]).length && (nodes as Node[])[0].parentNode;
-                if (parentNode) {
-                    replaceChildren(parentNode, newNodes, nodes);
-                    nodes = newNodes;
+                const newNodes = [] as Node[];
+                _copy(newNodes, _normalize(_toArray(transform!.call(this, value, parentNode, newNodes))));
+                replaceChildren(parentNode, newNodes, nodes);
+                if (record) {
+                    _replace(record, newNodes, nodes);
                 }
+                nodes = newNodes;
             });
         }
         return nodes;
