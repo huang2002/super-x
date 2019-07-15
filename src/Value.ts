@@ -324,7 +324,9 @@ export class Value<T = unknown> {
             this._listeners.push(value => {
                 const newNodes = [] as Node[];
                 _copy(newNodes, _normalize(_toArray(transform!.call(this, value, parentNode, newNodes))));
-                replaceChildren(parentNode, newNodes, nodes);
+                if (nodes[0].parentNode === parentNode) {
+                    replaceChildren(parentNode, newNodes, nodes);
+                }
                 if (record) {
                     _replace(record, newNodes, nodes);
                 }
