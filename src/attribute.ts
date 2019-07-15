@@ -12,7 +12,7 @@ export const updateVersion = (element: Element, attributeName: string) => {
     return newVersion;
 };
 
-const _VERSION_PREFIX = 'data-x-ver-';
+const _VERSION_PREFIX = 'data-x-v-';
 
 export const attributeSetters = new Map<string | symbol, AttributeSetter>([
     ['style', (element, style: string | StyleProperties) => {
