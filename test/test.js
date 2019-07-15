@@ -126,7 +126,7 @@ function AsyncTest() {
         'test1:　',
         X.createPlaceholder(
             new Promise(function (resolve, reject) {
-                setTimeout(reject, 2000, 'none');
+                setTimeout(reject, 3000, 'none');
             }),
             'pending',
             function (reason) {
