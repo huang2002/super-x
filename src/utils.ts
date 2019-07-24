@@ -1,4 +1,4 @@
-import { _Object, _Array, _document, _Infinity } from "./references";
+import { _Object, _Array, _document, _Infinity, _null, _undefined } from "./references";
 
 export type ElementType<T extends string> =
     T extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[T] : Element;
@@ -70,4 +70,13 @@ export const _normalize = (nodes: Node[], noFlat?: boolean): Node[] => {
             node
     );
     return noFlat ? result : result.flat(_Infinity);
+};
+
+export const _singleton = <T extends (...args: any[]) => any>(factory: T) => {
+    let instance: ReturnType<T> | void;
+    return function (this: any) {
+        return instance === _undefined ?
+            instance = factory.apply(this, arguments as unknown as any[]) :
+            instance;
+    } as T;
 };
