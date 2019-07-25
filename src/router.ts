@@ -1,24 +1,22 @@
 import { _toArray, _normalize } from "./utils";
 import { HistoryLike, createHistory } from "./histories";
 
-export type RouteMap<T extends string = string> = Record<T, (router: HistoryLike<T>) => any>;
+export type RouteCallback<T extends string = string> = (router: HistoryLike<T>) => any;
+export type RouteMap<T extends string = string> =
+    { [K in T]: RouteCallback<T>; } &
+    { [path: string]: RouteCallback<T>; };
 
-type RouteNames<T extends RouteMap> = T extends RouteMap<infer U> ? U : never;
-
-export const createRouter = <T extends RouteMap = RouteMap>(
-    defaultRoute: RouteNames<T> | HistoryLike<RouteNames<T>>, routeMap: T
+export const createRouter = <T extends string = string>(
+    init: T | HistoryLike<T>, routeMap: RouteMap<T>
 ) => {
-    const routeCache = new Map<RouteNames<T>, any>(),
-        history = ((defaultRoute as any)._isXV ?
-            defaultRoute :
-            createHistory(defaultRoute as RouteNames<T>)
-        ) as HistoryLike<RouteNames<T>>;
+    const routeCache = new Map<T, any>(),
+        history = ((init as any)._isXV ? init : createHistory(init as T)) as HistoryLike<T>;
     return history.mapSync(routeName => {
         if (routeCache.has(routeName)) {
             return routeCache.get(routeName);
         } else {
             const route = _normalize(_toArray(
-                routeMap[routeName](history as unknown as HistoryLike<string>)
+                routeMap[routeName](history)
             ));
             routeCache.set(routeName, route);
             return route;
