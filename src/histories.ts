@@ -4,17 +4,26 @@ import { _null } from "./references";
 
 export interface HistoryLike<T extends string = string> extends Value<T> {
     back(): void;
+    forward(): void;
 }
 
 export const createHistory = <T extends string = string>(init: T) => {
     const result = Value.of(init) as HistoryLike<T>,
-        history = new Array<T>();
+        history = new Array<T>(),
+        future = new Array<T>();
     result.addListener(path => {
         history.push(path);
-    });
-    result.back = () => {
+        future.length = 0;
+    }).back = () => {
         if (history.length) {
-            result.setSync(history[--history.length - 1]);
+            future.push(history.pop()!);
+            result.setSync(history[history.length - 1]);
+        }
+    };
+    result.forward = () => {
+        if (future.length) {
+            history.push(future.pop()!);
+            result.setSync(future[future.length - 1]);
         }
     };
     return result;
@@ -32,6 +41,9 @@ export const getHistory = _singleton(() => {
     }).back = () => {
         _history.back();
     };
+    result.forward = () => {
+        _history.forward();
+    };
     return result;
 });
 
@@ -39,6 +51,7 @@ export const getHashbang = _singleton((init?: string) => {
     const _location = location,
         initHash = _location.hash,
         history = new Array<string>(),
+        future = new Array<string>(),
         HASHBANG_PATTERN = /^#!/;
     if (HASHBANG_PATTERN.test(initHash)) {
         history.push(initHash.slice(2));
@@ -63,10 +76,18 @@ export const getHashbang = _singleton((init?: string) => {
     });
     result.addListener(path => {
         _location.hash = '#!' + path;
+        future.length = 0;
     }).back = () => {
         if (history.length) {
             backFlag = true;
-            _location.hash = '#!' + history[--history.length - 1];
+            future.push(history.pop()!);
+            _location.hash = '#!' + history[history.length - 1];
+        }
+    };
+    result.forward = () => {
+        if (future.length) {
+            history.push(future.pop()!);
+            result.setSync(future[future.length - 1]);
         }
     };
     return result;
