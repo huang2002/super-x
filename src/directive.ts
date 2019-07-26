@@ -84,7 +84,13 @@ export const directives = new Map<string | symbol, DirectiveHandler>([
     ['history', (element, history: HistoryLike) => {
         element.addEventListener('click', event => {
             event.preventDefault();
-            history.setSync((element as HTMLAnchorElement).href);
+            if (element.hasAttribute('back')) {
+                history.back();
+            } else if (element.hasAttribute('forward')) {
+                history.forward();
+            } else {
+                history.setSync((element as HTMLAnchorElement).href);
+            }
         });
     }],
 ]);
