@@ -1,6 +1,7 @@
 import { Value } from "./Value";
 import { addSchedule } from "./schedule";
 import { _iterate } from "./utils";
+import { HistoryLike } from "./histories";
 
 export interface InputElement extends Element {
     value: string;
@@ -79,5 +80,11 @@ export const directives = new Map<string | symbol, DirectiveHandler>([
     }],
     ['listeners', (element, listeners: Listeners) => {
         addEventListeners(element, listeners);
+    }],
+    ['history', (element, history: HistoryLike) => {
+        element.addEventListener('click', event => {
+            event.preventDefault();
+            history.setSync((element as HTMLAnchorElement).href);
+        });
     }],
 ]);
