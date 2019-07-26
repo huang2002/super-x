@@ -2,29 +2,33 @@ import { _toArray, _normalize } from "./utils";
 import { HistoryLike, createHistory } from "./histories";
 
 export type RouteCallback<T extends string = string> = (history: HistoryLike<T>) => any;
-export type RouteMap<T extends string = string> =
-    { [K in T]: RouteCallback<T>; } &
-    { [path: string]: RouteCallback<T>; };
+export type RouteRenderer<T extends string = string> = (matched: boolean, history: HistoryLike<T>) => any;
+export type Route<T extends string = string> =
+    ({ path: T; exact?: boolean; } | { pattern: RegExp; }) &
+    ({ use: RouteCallback<T>; } | { render: RouteRenderer<T>; });
 
 export const createRouter = <T extends string = string>(
-    init: T | HistoryLike<T>, routeMap: RouteMap<T>, defaultCallback?: RouteCallback<T>
+    init: T | HistoryLike<T>, routes: Route<T>[]
 ) => {
-    const routeCache = new Map<T, any>(),
+    const resultCache = new Map<T, any>(),
         history = ((init as any)._isXV ? init : createHistory(init as T)) as HistoryLike<T>;
-    let defaultRouteCache: any;
-    return history.mapSync(routeName => {
-        if (routeCache.has(routeName)) {
-            return routeCache.get(routeName);
-        } else if (routeName in routeMap) {
-            const route = _normalize(_toArray(
-                routeMap[routeName](history)
-            ));
-            routeCache.set(routeName, route);
-            return route;
+    return history.mapSync(path => {
+        if (resultCache.has(path)) {
+            return resultCache.get(path);
         } else {
-            return defaultCallback && (
-                defaultRouteCache || (defaultRouteCache = defaultCallback(history))
-            );
+            const result = new Array<any>();
+            routes.forEach(route => {
+                const matched = 'pattern' in route ?
+                    route.pattern.test(path) :
+                    route.exact ? route.path === path : path.startsWith(route.path);
+                if ('render' in route) {
+                    result.push(route.render(matched, history));
+                } else if (matched) {
+                    result.push(route.use(history));
+                }
+            });
+            resultCache.set(path, result);
+            return result;
         }
     });
 };
