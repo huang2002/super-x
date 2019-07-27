@@ -10,7 +10,7 @@ export type Route<T extends string = string> =
 export const createRouter = <T extends string = string>(
     init: T | HistoryLike<T>, routes: Route<T>[]
 ) => {
-    const resultCache = new Map<T, any>(),
+    const resultCache = new Map<T, Node[]>(),
         history = ((init as any)._isXV ? init : createHistory(init as T)) as HistoryLike<T>;
     return history.mapSync(path => {
         if (resultCache.has(path)) {
@@ -22,9 +22,9 @@ export const createRouter = <T extends string = string>(
                     route.pattern.test(path) :
                     route.exact ? route.path === path : path.startsWith(route.path);
                 if ('render' in route) {
-                    result.push(route.render(matched, history));
+                    result.push(_normalize(_toArray(route.render(matched, history))));
                 } else if (matched) {
-                    result.push(route.use(history));
+                    result.push(_normalize(_toArray(route.use(history))));
                 }
             });
             resultCache.set(path, result);
