@@ -9,11 +9,11 @@
 - reactive binding
 - element manipulation
 - custom attributes and directives
-- view routing
+- client-side routing
 - component styling
 - ...
 
-and is rather lightweight. (LESS than 10KB after minification WITHOUT zipping)
+and it is rather lightweight. (<15KB after minification WITHOUT zipping)
 
 ## Links
 
