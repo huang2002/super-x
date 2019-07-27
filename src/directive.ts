@@ -89,7 +89,7 @@ export const directives = new Map<string | symbol, DirectiveHandler>([
             } else if (element.hasAttribute('forward')) {
                 history.forward();
             } else {
-                history.setSync((element as HTMLAnchorElement).href);
+                history.setSync(element.getAttribute('href')!);
             }
         });
     }],
