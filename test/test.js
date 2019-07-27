@@ -136,29 +136,72 @@ function AsyncTest() {
     ];
 }
 
-/** @type {X.Value<'title' | 'textarea' | 'async'>} */
-const router = X.Value.of('title'),
-    routes = {
-        title: TitleTest,
-        textarea: TextareaTest,
-        async: AsyncTest
-    };
+const FAKE_HREF = 'javascript:;';
+
+function RouterTest() {
+    function RouteA(matched, history) {
+        return h('p', null,
+            '/a (',
+            matched ? 'matched' : 'not matched',
+            '"',
+            history.getSync(),
+            '")'
+        );
+    }
+    function Nav(history) {
+        return h('nav', null,
+            ['/a', '/b', '/ab'].map(function (path) {
+                return X.createFragment([
+                    h('a', { href: path, history: history }, path),
+                    ' '
+                ]);
+            }),
+            h('a', { href: FAKE_HREF, back: '', history: history }, 'back'),
+            ' ',
+            h('a', { href: FAKE_HREF, forward: '', history: history }, 'forward')
+        );
+    }
+    const routes = [
+        { path: '/a', render: RouteA },
+        { path: '/a', exact: true, use: function () { return h('p', null, '/a (exact)'); } },
+        { path: '/b', use: function () { return h('p', null, '/b'); } },
+        { path: '/', use: Nav }
+    ];
+    return [
+        h('h2', null, 'history routing'),
+        X.createRouter(X.getHistory(), routes),
+        h('h2', null, 'view routing'),
+        X.createRouter(X.createHistory('/a'), routes)
+    ];
+}
+
+const hashbang = X.getHashbang('/title'),
+    testRoutes = [
+        { path: '/title', exact: true, use: TitleTest },
+        { path: '/textarea', exact: true, use: TextareaTest },
+        { path: '/async', exact: true, use: AsyncTest },
+        { path: '/router', exact: true, use: RouterTest }
+    ];
 
 X.appendChildren(
     document.body, [
-        X.createElement('div', null, X.createRouter(router, routes)),
+        X.createElement('div', null, X.createRouter(hashbang, testRoutes)),
         X.createElement('div', { style: 'margin-top: 1em;' },
             'Select test:　',
             X.createElement('select', {
-                bind: router,
+                bind: hashbang,
                 listeners: {
                     change: function () {
                         console.log('test changed');
                     }
                 }
-            }, Object.keys(routes).map(function (name) {
-                return h('option', { value: name }, name + ' test');
-            }))
+            }, testRoutes.map(function (route) {
+                return h('option', { value: route.path }, route.path.slice(1) + ' test');
+            })),
+            ' ',
+            h('a', { href: FAKE_HREF, back: '', history: hashbang }, 'back'),
+            ' ',
+            h('a', { href: FAKE_HREF, forward: '', history: hashbang }, 'forward')
         )
     ]
 );
