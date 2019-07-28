@@ -14,7 +14,7 @@ export const createRouter = <T extends string = string>(
         history = ((init as any)._isXV ? init : createHistory(init as T)) as HistoryLike<T>;
     return history.mapSync(path => {
         if (resultCache.has(path)) {
-            return resultCache.get(path);
+            return resultCache.get(path)!;
         } else {
             const result = new Array<any>();
             routes.forEach(route => {
