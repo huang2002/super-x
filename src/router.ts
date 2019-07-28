@@ -3,12 +3,12 @@ import { HistoryLike, createHistory } from "./histories";
 
 export type RouteCallback<T extends string = string> = (history: HistoryLike<T>) => any;
 export type RouteRenderer<T extends string = string> = (matched: boolean, history: HistoryLike<T>) => any;
-export type Route<T extends string = string> =
+export type RouteDeclaraion<T extends string = string> =
     ({ path: T; exact?: boolean; } | { pattern: RegExp; }) &
     ({ use: RouteCallback<T>; } | { render: RouteRenderer<T>; });
 
 export const createRouter = <T extends string = string>(
-    init: T | HistoryLike<T>, routes: Route<T>[]
+    init: T | HistoryLike<T>, routes: RouteDeclaraion<T>[]
 ) => {
     const resultCache = new Map<T, Node[]>(),
         history = ((init as any)._isXV ? init : createHistory(init as T)) as HistoryLike<T>;
