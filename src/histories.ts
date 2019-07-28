@@ -9,7 +9,7 @@ export interface HistoryLike<T extends string = string> extends Value<T> {
 
 export const createHistory = <T extends string = string>(init: T) => {
     const result = Value.of(init) as HistoryLike<T>,
-        history = new Array<T>(init),
+        history = [init],
         future = new Array<T>();
     let backForwardFlag = false;
     result.addListener(path => {
@@ -69,13 +69,14 @@ export const getHashbang = _singleton((init?: string) => {
         initHash = _location.hash,
         history = new Array<string>(),
         future = new Array<string>(),
-        HASHBANG_PATTERN = /^#!/;
+        HASHBANG_PATTERN = /^#!/,
+        HASHBANG_PREFIX = '#!';
     if (HASHBANG_PATTERN.test(initHash)) {
         history.push(initHash.slice(2));
     } else {
         init = init || '';
         history.push(init);
-        _location.hash = '#!' + init;
+        _location.hash = HASHBANG_PREFIX + init;
     }
     const result = Value.of(history[0]) as HistoryLike;
     let backForwardFlag = false;
@@ -88,7 +89,7 @@ export const getHashbang = _singleton((init?: string) => {
         }
     });
     result.addListener(path => {
-        _location.hash = '#!' + path;
+        _location.hash = HASHBANG_PREFIX + path;
         if (!backForwardFlag) {
             future.length = 0;
         }
