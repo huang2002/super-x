@@ -1,4 +1,4 @@
-import { _Boolean, _Array, _Object } from "./references";
+import { _Boolean, _Array, _Object, _Map } from "./references";
 import { Value } from "./Value";
 import { directives } from "./directive";
 import { _isString, _iterate } from "./utils";
@@ -14,7 +14,7 @@ export const updateVersion = (element: Element, attributeName: string) => {
 
 const _VERSION_PREFIX = 'data-x-v-';
 
-export const attributeSetters = new Map<string | symbol, AttributeSetter>([
+export const attributeSetters = new _Map<string | symbol, AttributeSetter>([
     ['style', (element, style: string | StyleProperties) => {
         if (_isString(style)) {
             element.setAttribute('style', style);

@@ -1,5 +1,6 @@
 import { _toArray, _normalize } from "./utils";
 import { HistoryLike, createHistory } from "./histories";
+import { _Map } from "./references";
 
 export type RouteCallback<T extends string = string> = (history: HistoryLike<T>) => any;
 export type RouteRenderer<T extends string = string> = (matched: boolean, history: HistoryLike<T>) => any;
@@ -10,7 +11,7 @@ export type RouteDeclaraion<T extends string = string> =
 export const createRouter = <T extends string = string>(
     init: T | HistoryLike<T>, routes: RouteDeclaraion<T>[]
 ) => {
-    const resultCache = new Map<T, Node[]>(),
+    const resultCache = new _Map<T, Node[]>(),
         history = ((init as any)._isXV ? init : createHistory(init as T)) as HistoryLike<T>;
     return history.mapSync(path => {
         if (resultCache.has(path)) {

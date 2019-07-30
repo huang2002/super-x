@@ -2,6 +2,7 @@ import { Value } from "./Value";
 import { addSchedule } from "./schedule";
 import { _iterate } from "./utils";
 import { HistoryLike } from "./histories";
+import { _Map } from "./references";
 
 export interface InputElement extends Element {
     value: string;
@@ -71,7 +72,7 @@ export const addEventListeners = (eventTarget: EventTarget, listeners: Listeners
     });
 };
 
-export const directives = new Map<string | symbol, DirectiveHandler>([
+export const directives = new _Map<string | symbol, DirectiveHandler>([
     ['bind', (element, value: Value) => {
         bind(element as InputElement, value);
     }],

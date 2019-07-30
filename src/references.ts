@@ -8,6 +8,7 @@ export const _document = document,
     _Boolean = Boolean,
     _Object = Object,
     _Array = Array,
+    _Map = Map,
     _Node = Node;
 
 export const _fragment = _document.createDocumentFragment();
