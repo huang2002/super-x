@@ -143,8 +143,12 @@ export class Value<T = unknown> {
             value = (value as Value<any>).toNodes(parentNode, _null, record);
         }
         if (_Array.isArray(value)) {
-            const { defaultNodeTransform } = Value;
-            return value.flatMap(v => defaultNodeTransform.call(this, v, parentNode, record));
+            if (value.length) {
+                const { defaultNodeTransform } = Value;
+                return value.flatMap(v => defaultNodeTransform.call(this, v, parentNode, record));
+            } else {
+                return _document.createTextNode('');
+            }
         } else {
             return toNode(value);
         }
