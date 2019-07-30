@@ -175,12 +175,51 @@ function RouterTest() {
     ];
 }
 
+function ListTest() {
+    const items = X.Value.of([]);
+    const input = h('input', { placeholder: 'text' });
+    return [
+        h('form', {
+            href: FAKE_HREF,
+            listeners: {
+                submit: function () {
+                    const content = input.value;
+                    items.set(items => items.concat({ text: content }));
+                    input.value = '';
+                }
+            }
+        },
+            input,
+            h('button', { type: 'submit' }, 'Add')
+        ),
+        items.mapSync(function (array) {
+            return array.map(function (item) {
+                return h('p', null,
+                    item.text,
+                    ' ',
+                    h('a', {
+                        href: FAKE_HREF,
+                        listeners: {
+                            click: function () {
+                                items.set(array => array.filter(function (_item) {
+                                    return _item !== item;
+                                }));
+                            }
+                        }
+                    }, 'Del')
+                );
+            });
+        })
+    ];
+}
+
 const hashbang = X.getHashbang('/title'),
     testRoutes = [
         { path: '/title', exact: true, use: TitleTest },
         { path: '/textarea', exact: true, use: TextareaTest },
         { path: '/async', exact: true, use: AsyncTest },
-        { path: '/router', exact: true, use: RouterTest }
+        { path: '/router', exact: true, use: RouterTest },
+        { path: '/list', exact: true, use: ListTest }
     ];
 
 X.appendChildren(
