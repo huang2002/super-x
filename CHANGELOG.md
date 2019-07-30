@@ -1,3 +1,7 @@
+### 0.3.1 - 2019-07-30
+
+- Fix a bug in `Value.defaultNodeTransform`
+
 ## 0.3.0 - 2019-07-28
 
 - Add history APIs
