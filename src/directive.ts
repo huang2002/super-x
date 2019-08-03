@@ -14,12 +14,12 @@ export let getInputEvent = (element: InputElement): string =>
     (element.tagName === 'INPUT' && element.getAttribute('type') === 'range' ||
         element.tagName === 'SELECT') ? 'change' : 'input';
 
-export const bind = (element: InputElement, value: Value) => {
-    value.get().then(current => {
-        element.value = current as string;
+export const bind = (element: InputElement, $value: Value) => {
+    $value.get().then(value => {
+        element.value = value as string;
         const EVENT = getInputEvent(element);
         const _inputListener = () => {
-            value.set(() => element.value);
+            $value.set(() => element.value);
         };
         element.addEventListener(EVENT, _inputListener);
         const _listener = (newValue: unknown) => {
@@ -27,21 +27,21 @@ export const bind = (element: InputElement, value: Value) => {
                 element.value = newValue as string;
             }
         };
-        value.addListener(_listener)
+        $value.addListener(_listener)
             .addDestroyCallback(() => {
                 element.removeEventListener(EVENT, _inputListener);
-                value.removeListener(_listener);
+                $value.removeListener(_listener);
             });
     });
     return element;
 };
 
-export const bindSync = (element: InputElement, value: Value) => {
+export const bindSync = (element: InputElement, $value: Value) => {
     addSchedule(() => {
-        element.value = value.getSync() as string;
+        element.value = $value.getSync() as string;
         const EVENT = getInputEvent(element);
         const _inputListener = () => {
-            value.setSync(element.value);
+            $value.setSync(element.value);
         };
         element.addEventListener(EVENT, _inputListener);
         const _listener = (newValue: unknown) => {
@@ -49,10 +49,10 @@ export const bindSync = (element: InputElement, value: Value) => {
                 element.value = newValue as string;
             }
         };
-        value.addListener(_listener)
+        $value.addListener(_listener)
             .addDestroyCallback(() => {
                 element.removeEventListener(EVENT, _inputListener);
-                value.removeListener(_listener);
+                $value.removeListener(_listener);
             });
     });
     return element;
@@ -82,15 +82,15 @@ export const directives = new _Map<string | symbol, DirectiveHandler>([
     ['listeners', (element, listeners: Listeners) => {
         addEventListeners(element, listeners);
     }],
-    ['history', (element, history: HistoryLike) => {
+    ['history', (element, $history: HistoryLike) => {
         element.addEventListener('click', event => {
             event.preventDefault();
             if (element.hasAttribute('back')) {
-                history.back();
+                $history.back();
             } else if (element.hasAttribute('forward')) {
-                history.forward();
+                $history.forward();
             } else {
-                history.setSync(element.getAttribute('href')!);
+                $history.setSync(element.getAttribute('href')!);
             }
         });
     }],

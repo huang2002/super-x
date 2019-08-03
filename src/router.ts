@@ -2,8 +2,8 @@ import { _toArray, _normalize } from "./utils";
 import { HistoryLike, createHistory } from "./histories";
 import { _Map } from "./references";
 
-export type RouteCallback<T extends string = string> = (history: HistoryLike<T>) => any;
-export type RouteRenderer<T extends string = string> = (matched: boolean, history: HistoryLike<T>) => any;
+export type RouteCallback<T extends string = string> = ($history: HistoryLike<T>) => any;
+export type RouteRenderer<T extends string = string> = (matched: boolean, $history: HistoryLike<T>) => any;
 export type RouteDeclaraion<T extends string = string> =
     ({ path: T; exact?: boolean; } | { pattern: RegExp; }) &
     ({ use: RouteCallback<T>; } | { render: RouteRenderer<T>; });
@@ -12,8 +12,8 @@ export const createRouter = <T extends string = string>(
     init: T | HistoryLike<T>, routes: RouteDeclaraion<T>[]
 ) => {
     const resultCache = new _Map<T, Node[]>(),
-        history = ((init as any)._isXV ? init : createHistory(init as T)) as HistoryLike<T>;
-    return history.mapSync(path => {
+        $history = ((init as any)._isXV ? init : createHistory(init as T)) as HistoryLike<T>;
+    return $history.mapSync(path => {
         if (resultCache.has(path)) {
             return resultCache.get(path)!;
         } else {
@@ -23,9 +23,9 @@ export const createRouter = <T extends string = string>(
                     route.pattern.test(path) :
                     route.exact ? route.path === path : path.startsWith(route.path);
                 if ('render' in route) {
-                    result.push(_normalize(_toArray(route.render(matched, history))));
+                    result.push(_normalize(_toArray(route.render(matched, $history))));
                 } else if (matched) {
-                    result.push(_normalize(_toArray(route.use(history))));
+                    result.push(_normalize(_toArray(route.use($history))));
                 }
             });
             resultCache.set(path, result);

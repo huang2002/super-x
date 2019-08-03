@@ -3,7 +3,7 @@
 
 const h = X.createElement;
 
-const title = X.Value.wrap({
+const $title = X.Value.wrap({
     content: 'Hello, world!',
     color: '#000000'
 });
@@ -16,11 +16,11 @@ const LABEL_CLASS = X.createClass({
     }
 });
 
-const inputWidth = X.Value.of(10);
+const $inputWidth = X.Value.of(10);
 
 const INPUT_CLASS = X.createClass({
     _: {
-        width: X.Value.joinSync([inputWidth, 'em']),
+        width: X.Value.joinSync([$inputWidth, 'em']),
         padding: '.2em .4em',
         border: 'solid 1px #666',
         'border-radius': '3px'
@@ -68,11 +68,11 @@ function TitleTest() {
         h('h1', {
             id: 'title',
             style: {
-                color: title.color
+                color: $title.color
             }
-        }, title.content),
+        }, $title.content),
         LabelledInput('title-content-input', 'title content', {
-            bind: title.content,
+            bind: $title.content,
             listeners: {
                 input: [
                     function () {
@@ -86,13 +86,13 @@ function TitleTest() {
         LabelledInput('title-color-input', 'title color', {
             class: '',
             type: 'color',
-            bindSync: title.color
+            bindSync: $title.color
         }),
         h('br'),
         LabelledInput('input-width-input', 'input width', {
             class: [],
-            'data-value': inputWidth,
-            bind: inputWidth,
+            'data-value': $inputWidth,
+            bind: $inputWidth,
             type: 'range',
             max: 20,
             min: 6
@@ -102,13 +102,13 @@ function TitleTest() {
 }
 
 function TextareaTest() {
-    const content = X.Value.of('<h1>Textarea Test</h1>');
+    const $content = X.Value.of('<h1>Textarea Test</h1>');
     return [
-        h('div', { html: content }),
+        h('div', { html: $content }),
         h('textarea', {
             cols: 50,
             rows: 15,
-            bind: content
+            bind: $content
         })
     ];
 }
@@ -139,26 +139,26 @@ function AsyncTest() {
 const FAKE_HREF = 'javascript:;';
 
 function RouterTest() {
-    function RouteA(matched, history) {
+    function RouteA(matched, $history) {
         return h('p', null,
             '/a (',
             matched ? 'matched' : 'not matched',
             '"',
-            history.getSync(),
+            $history.getSync(),
             '")'
         );
     }
-    function Nav(history) {
+    function Nav($history) {
         return h('nav', null,
             ['/a', '/b', '/ab'].map(function (path) {
                 return X.createFragment([
-                    h('a', { href: path, history: history }, path),
+                    h('a', { href: path, history: $history }, path),
                     ' '
                 ]);
             }),
-            h('a', { href: FAKE_HREF, back: '', history: history }, 'back'),
+            h('a', { href: FAKE_HREF, back: '', history: $history }, 'back'),
             ' ',
-            h('a', { href: FAKE_HREF, forward: '', history: history }, 'forward')
+            h('a', { href: FAKE_HREF, forward: '', history: $history }, 'forward')
         );
     }
     const routes = [
@@ -176,7 +176,7 @@ function RouterTest() {
 }
 
 function ListTest() {
-    const items = X.Value.of([]);
+    const $items = X.Value.of([]);
     const input = h('input', { placeholder: 'text' });
     return [
         h('form', {
@@ -184,7 +184,7 @@ function ListTest() {
             listeners: {
                 submit: function () {
                     const content = input.value;
-                    items.set(items => items.concat({ text: content }));
+                    $items.set(items => items.concat({ text: content }));
                     input.value = '';
                 }
             }
@@ -192,8 +192,8 @@ function ListTest() {
             input,
             h('button', { type: 'submit' }, 'Add')
         ),
-        items.mapSync(function (array) {
-            return array.map(function (item) {
+        $items.mapSync(function (items) {
+            return items.map(function (item) {
                 return h('p', null,
                     item.text,
                     ' ',
@@ -201,7 +201,7 @@ function ListTest() {
                         href: FAKE_HREF,
                         listeners: {
                             click: function () {
-                                items.set(array => array.filter(function (_item) {
+                                $items.set(items => items.filter(function (_item) {
                                     return _item !== item;
                                 }));
                             }
@@ -213,7 +213,7 @@ function ListTest() {
     ];
 }
 
-const hashbang = X.getHashbang('/title'),
+const $hashbang = X.getHashbang('/title'),
     testRoutes = [
         { path: '/title', exact: true, use: TitleTest },
         { path: '/textarea', exact: true, use: TextareaTest },
@@ -224,11 +224,11 @@ const hashbang = X.getHashbang('/title'),
 
 X.appendChildren(
     document.body, [
-        X.createElement('div', null, X.createRouter(hashbang, testRoutes)),
+        X.createElement('div', null, X.createRouter($hashbang, testRoutes)),
         X.createElement('div', { style: 'margin-top: 1em;' },
             'Select test:　',
             X.createElement('select', {
-                bind: hashbang,
+                bind: $hashbang,
                 listeners: {
                     change: function () {
                         console.log('test changed');
@@ -238,9 +238,9 @@ X.appendChildren(
                 return h('option', { value: route.path }, route.path.slice(1) + ' test');
             })),
             ' ',
-            h('a', { href: FAKE_HREF, back: '', history: hashbang }, 'back'),
+            h('a', { href: FAKE_HREF, back: '', history: $hashbang }, 'back'),
             ' ',
-            h('a', { href: FAKE_HREF, forward: '', history: hashbang }, 'forward')
+            h('a', { href: FAKE_HREF, forward: '', history: $hashbang }, 'forward')
         )
     ]
 );

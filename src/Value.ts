@@ -80,11 +80,11 @@ export class Value<T = unknown> {
         components: T, composer: ValueComposer<T, U>
     ) {
         return Value.unwrap(components).then(currentValues => {
-            const newValue = new Value<U>(
+            const $newValue = new Value<U>(
                 composer.call(_undefined, currentValues)
             ), listener = () => {
                 Value.unwrap(components).then(newValues => {
-                    newValue.set(() => composer.call(_undefined, newValues));
+                    $newValue.set(() => composer.call(_undefined, newValues));
                 });
             };
             const componentArray = _Array.isArray(components) ? components : _Object.values(components),
@@ -95,23 +95,23 @@ export class Value<T = unknown> {
                     (component as Value)._listeners.push(listener);
                 }
             });
-            newValue.addDestroyCallback(() => {
-                values.forEach(value => {
-                    const { _listeners } = value;
+            $newValue.addDestroyCallback(() => {
+                values.forEach($value => {
+                    const { _listeners } = $value;
                     _removeIndex(_listeners, _listeners.indexOf(listener));
                 });
             });
-            return newValue;
+            return $newValue;
         });
     }
 
     static composeSync<T extends {} = any, U = unknown>(
         components: T, composer: ValueComposer<T, U>
     ) {
-        const newValue = new Value<U>(
+        const $newValue = new Value<U>(
             composer.call(_undefined, Value.unwrapSync(components))
         ), listener = () => {
-            newValue.setSync(composer.call(_undefined, Value.unwrapSync(components)));
+            $newValue.setSync(composer.call(_undefined, Value.unwrapSync(components)));
         };
         const componentArray = _Array.isArray(components) ? components : _Object.values(components),
             values = new Array<Value>();
@@ -121,13 +121,13 @@ export class Value<T = unknown> {
                 (component as Value)._listeners.push(listener);
             }
         });
-        newValue.addDestroyCallback(() => {
-            values.forEach(value => {
-                const { _listeners } = value;
+        $newValue.addDestroyCallback(() => {
+            values.forEach($value => {
+                const { _listeners } = $value;
                 _removeIndex(_listeners, _listeners.indexOf(listener));
             });
         });
-        return newValue;
+        return $newValue;
     }
 
     static join(components: any[], separator?: string) {
@@ -280,30 +280,30 @@ export class Value<T = unknown> {
 
     map<U = unknown>(callback: (this: this, value: T) => U) {
         return this.get().then(current => {
-            const newValue = new Value<U>(callback.call(this, current)),
-                listener = (value: T) => { newValue.set(() => callback.call(this, value)); },
+            const $newValue = new Value<U>(callback.call(this, current)),
+                listener = (value: T) => { $newValue.set(() => callback.call(this, value)); },
                 { _listeners } = this;
             if (this.active) {
                 _listeners.push(listener);
-                newValue.addDestroyCallback(() => {
+                $newValue.addDestroyCallback(() => {
                     _removeIndex(_listeners, _listeners.indexOf(listener));
                 });
             }
-            return newValue;
+            return $newValue;
         });
     }
 
     mapSync<U = unknown>(callback: (this: this, value: T) => U) {
-        const newValue = new Value<U>(callback.call(this, this._current)),
-            listener = (value: T) => { newValue.setSync(callback.call(this, value)); },
+        const $newValue = new Value<U>(callback.call(this, this._current)),
+            listener = (value: T) => { $newValue.setSync(callback.call(this, value)); },
             { _listeners } = this;
         if (this.active) {
             _listeners.push(listener);
-            newValue.addDestroyCallback(() => {
+            $newValue.addDestroyCallback(() => {
                 _removeIndex(_listeners, _listeners.indexOf(listener));
             });
         }
-        return newValue;
+        return $newValue;
     }
 
     toTextNode(transform?: (this: this, value: T) => string) {

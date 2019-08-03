@@ -1,10 +1,10 @@
 const h = X.createElement;
 
 function App() {
-    const title = X.Value.of('Hello, world!');
+    const $title = X.Value.of('Hello, world!');
     return X.createFragment([
-        h('h1', null, title),
-        h('input', { bind: title })
+        h('h1', null, $title),
+        h('input', { bind: $title })
     ]);
 }
 
