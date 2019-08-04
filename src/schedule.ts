@@ -9,7 +9,7 @@ let _willTick = false;
 export type Ticker = (callback: () => void) => void;
 
 export let tick: Ticker = requestAnimationFrame,
-    tickLimit = 13;
+    tickLimit = 10;
 
 export const update = () => {
     const deadline = _now() + tickLimit;
