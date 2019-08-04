@@ -1,3 +1,9 @@
+### 0.3.2 - 2019-08-04
+
+- Modify default `tickLimit`
+- Improve example code
+- Improve docs
+
 ### 0.3.1 - 2019-07-30
 
 - Fix a bug in `Value.defaultNodeTransform`
