@@ -1,7 +1,8 @@
 // @ts-check
 ///<reference types=".." />
 
-const h = X.createElement;
+const h = X.createElement,
+    $ = X.Value.of;
 
 const $title = X.Value.wrap({
     content: 'Hello, world!',
@@ -16,7 +17,7 @@ const LABEL_CLASS = X.createClass({
     }
 });
 
-const $inputWidth = X.Value.of(10);
+const $inputWidth = $(10);
 
 const INPUT_CLASS = X.createClass({
     _: {
@@ -102,7 +103,7 @@ function TitleTest() {
 }
 
 function TextareaTest() {
-    const $content = X.Value.of('<h1>Textarea Test</h1>');
+    const $content = $('<h1>Textarea Test</h1>');
     return [
         h('div', { html: $content }),
         h('textarea', {
@@ -176,11 +177,11 @@ function RouterTest() {
 }
 
 function ListTest() {
-    const $items = X.Value.of([]);
+    const $items = $([]);
     const input = h('input', { placeholder: 'text' });
     return [
         h('form', {
-            href: FAKE_HREF,
+            action: FAKE_HREF,
             listeners: {
                 submit: function () {
                     const content = input.value;
