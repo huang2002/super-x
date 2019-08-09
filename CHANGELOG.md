@@ -1,3 +1,7 @@
+### 0.3.3 - 2019-08-09
+
+- Fix a bug in node replacing
+
 ### 0.3.2 - 2019-08-04
 
 - Modify default `tickLimit`
