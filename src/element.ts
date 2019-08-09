@@ -38,7 +38,14 @@ export const appendChildren = (parentNode: Node, childNodes: any[]) => {
     return parentNode;
 };
 
+const _placeholder = _createPlaceholder();
 export const replaceChildren = (parentNode: Node, newNodes: Node[], oldNodes: Node[]) => {
+    const firstOldNode = oldNodes[0];
+    oldNodes = oldNodes.filter(oldNode => !newNodes.includes(oldNode));
+    if (!oldNodes.length) {
+        parentNode.insertBefore(_placeholder, firstOldNode);
+        oldNodes.push(_placeholder);
+    }
     const lastIndex = oldNodes.length - 1;
     oldNodes.forEach((oldNode, i) => {
         if (i < lastIndex) {
