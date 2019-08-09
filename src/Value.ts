@@ -1,4 +1,4 @@
-import { _removeIndex, _iterate, _toArray, _normalize, _replace, _copy } from "./utils";
+import { _removeIndex, _iterate, _toArray, _normalize, _replace, _copy, _createPlaceholder } from "./utils";
 import { _undefined, _document, _Object, _Array, _Promise, _Infinity, _null } from "./references";
 import { addSchedule, removeSchedule } from "./schedule";
 import { toNode, replaceChildren } from "./element";
@@ -147,7 +147,7 @@ export class Value<T = unknown> {
                 const { defaultNodeTransform } = Value;
                 return value.flatMap(v => defaultNodeTransform.call(this, v, parentNode, record));
             } else {
-                return _document.createTextNode('');
+                return _createPlaceholder();
             }
         } else {
             return toNode(value);

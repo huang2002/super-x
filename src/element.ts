@@ -1,7 +1,7 @@
 import { _document, _Array, _Infinity, _null, _Node, _Promise, _fragment } from "./references";
 import { setAttributes } from "./attribute";
 import { Value } from "./Value";
-import { ElementType } from "./utils";
+import { ElementType, _createPlaceholder } from "./utils";
 
 export const createFragment = (nodes: any[]) => {
     const fragment = _document.createDocumentFragment();
@@ -11,7 +11,7 @@ export const createFragment = (nodes: any[]) => {
 
 export const toNode = (value: any) => {
     if (typeof value === 'boolean' || value == _null) {
-        return _document.createTextNode('');
+        return _createPlaceholder();
     } else if (value instanceof _Node) {
         return value;
     } else {

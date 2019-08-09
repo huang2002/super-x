@@ -80,3 +80,5 @@ export const _singleton = <T extends (...args: any[]) => any>(factory: T) => {
             instance;
     } as T;
 };
+
+export const _createPlaceholder = () => _document.createTextNode('');
