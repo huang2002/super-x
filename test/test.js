@@ -9,7 +9,7 @@ const $title = X.Value.wrap({
     color: '#000000'
 });
 
-const LABEL_CLASS = X.createClass({
+const LABEL_CLASS = X.createStyleClass({
     _: {
         display: 'inline-block',
         width: '8em',
@@ -19,7 +19,7 @@ const LABEL_CLASS = X.createClass({
 
 const $inputWidth = $(10);
 
-const INPUT_CLASS = X.createClass({
+const INPUT_CLASS = X.createStyleClass({
     _: {
         width: X.Value.joinSync([$inputWidth, 'em']),
         padding: '.2em .4em',
@@ -32,7 +32,7 @@ const INPUT_CLASS = X.createClass({
     }
 });
 
-const RANGE_CLASS = X.createClass({
+const RANGE_CLASS = X.createStyleClass({
     _: {
         position: 'relative',
         overflow: 'visible'

@@ -63,7 +63,7 @@ export const createClassName = () => `x-class-${_styleCount++}`;
 
 let _styleElement: HTMLStyleElement | void;
 
-export const createClass = (style: Style, placeholder?: RegExp, className?: string) => {
+export const createStyleClass = (style: Style, placeholder?: RegExp, className?: string) => {
     const CLASS_NAME = className || createClassName(),
         styleContent = createStyleContent(style, placeholder || defaultClassPlaceholder, CLASS_NAME);
     if (_styleElement) {
