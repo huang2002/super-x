@@ -1,3 +1,8 @@
+## 0.4.0 - 2019-09-14
+
+- Add `addStyle`
+- Rename `createClass` `createStyleClass`
+
 ### 0.3.3 - 2019-08-09
 
 - Fix a bug in node replacing
