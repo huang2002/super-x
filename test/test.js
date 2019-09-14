@@ -64,13 +64,16 @@ function LabelledInput(id, label, inputOptions) {
     ];
 }
 
+X.addStyle({
+    '#title': {
+        color: $title.color
+    }
+});
+
 function TitleTest() {
     return X.createFragment([
         h('h1', {
             id: 'title',
-            style: {
-                color: $title.color
-            }
         }, $title.content),
         LabelledInput('title-content-input', 'title content', {
             bind: $title.content,
