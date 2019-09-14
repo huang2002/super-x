@@ -63,9 +63,7 @@ export const createClassName = () => `x-class-${_styleCount++}`;
 
 let _styleElement: HTMLStyleElement | void;
 
-export const createStyleClass = (style: Style, placeholder?: RegExp, className?: string) => {
-    const CLASS_NAME = className || createClassName(),
-        styleContent = createStyleContent(style, placeholder || defaultClassPlaceholder, CLASS_NAME);
+const addStyleContent = (styleContent: StyleContent) => {
     if (_styleElement) {
         appendChildren(_styleElement, styleContent);
     } else {
@@ -73,5 +71,15 @@ export const createStyleClass = (style: Style, placeholder?: RegExp, className?:
             _styleElement = createElement('style', { id: 'x-style', type: 'text/css' }, styleContent)
         );
     }
+};
+
+export const createStyleClass = (style: Style, placeholder?: RegExp, className?: string) => {
+    const CLASS_NAME = className || createClassName();
+    addStyleContent(createStyleContent(style, placeholder || defaultClassPlaceholder, CLASS_NAME));
     return CLASS_NAME;
+};
+
+export const addStyle = (style: Style) => {
+    const styleContent = createStyleContent(style);
+    addStyleContent(styleContent);
 };
