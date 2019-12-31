@@ -68,6 +68,7 @@ export class ReactiveValue<T> extends Reactive<T, T>{
 
     linkText(text: Text, mapper: ReactiveMapper<T, string> = String) {
         if (!this._textWatchers.has(text)) {
+            text.data = mapper(this.current);
             const watcher = (value: T) => {
                 text.data = mapper(value);
             };
@@ -87,7 +88,7 @@ export class ReactiveValue<T> extends Reactive<T, T>{
     }
 
     toText(mapper: ReactiveMapper<T, string> = String) {
-        return this.linkText(document.createTextNode(mapper(this.current)));
+        return this.linkText(document.createTextNode(''));
     }
 
     bind(element: HTMLElement) {
