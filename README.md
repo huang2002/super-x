@@ -1,10 +1,10 @@
 # super-x
 
-> A lightweight front-end lib.
+> A reactive UI lib.
 
 ## Introduction
 
-(TBC)
+`super-x` is a reactive UI lib which aims at being lightweight. To create interactive UIs, just declare them in a reactive way, and this lib will do the rest.
 
 ## Links
 
