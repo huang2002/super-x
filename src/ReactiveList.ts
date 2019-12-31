@@ -4,7 +4,7 @@ import { Utils } from "./Utils";
 export type ReactiveListMapper<T, U> = (originalValue: T, index: number) => U;
 
 export type ReactiveListEvent<T> =
-    { type: 'change', index: number, value: T } |
+    { type: 'replace', index: number, value: T } |
     { type: 'insert', index: number, value: T } |
     { type: 'push', value: T } |
     { type: 'delete', index: number } |
@@ -28,7 +28,7 @@ export class ReactiveList<T> extends Reactive<T[], ReactiveListEvent<T>> {
     }
 
     replace(index: number, value: T) {
-        return this._emit({ type: 'change', index, value });
+        return this._emit({ type: 'replace', index, value });
     }
 
     insert(index: number, value: T) {
@@ -65,7 +65,7 @@ export class ReactiveList<T> extends Reactive<T[], ReactiveListEvent<T>> {
         const { current, _watchers } = this;
         this._events.forEach(event => {
             switch (event.type) {
-                case 'change':
+                case 'replace':
                     current[event.index] = event.value;
                     break;
                 case 'insert':
@@ -95,7 +95,7 @@ export class ReactiveList<T> extends Reactive<T[], ReactiveListEvent<T>> {
             const watcher = (event: ReactiveListEvent<T>) => {
                 const { childNodes } = element;
                 switch (event.type) {
-                    case 'change':
+                    case 'replace':
                         element.replaceChild(
                             mapper(event.value, event.index),
                             childNodes[event.index]
