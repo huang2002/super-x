@@ -17,7 +17,7 @@ export class ReactiveValue<T> extends Reactive<T, T>{
             'change' : 'input';
     }
 
-    protected _setters = new Array<ReactiveValueSetter<T>>();
+    private _setters = new Array<ReactiveValueSetter<T>>();
     private _origin: ReactiveValue<any> | null = null;
     private _originWatcher: ReactiveWatcher<any> | null = null;
     private _textWatchers = new Map<Text, ReactiveWatcher<T>>();
