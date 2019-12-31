@@ -1,7 +1,7 @@
 export interface ListenerMap {
     [key: string]: EventListener | {
         listener: EventListener;
-        options: EventListenerOptions;
+        options: EventListenerOptions | boolean;
     };
 }
 
