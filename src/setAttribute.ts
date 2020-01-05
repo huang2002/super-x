@@ -14,11 +14,17 @@ export const directives = new Map<string, DirectiveHandler>([
             element.setAttribute('class', '');
         }
         if (typeof classes === 'object') {
-            element.setAttribute('class', (
-                Array.isArray(classes) ?
-                    classes.filter(Boolean) :
-                    Object.keys(classes!).filter(key => (classes as any)[key])
-            ).join(' '));
+            const toClassName = (classNames: object) => (
+                Array.isArray(classNames) ?
+                    classNames.filter(Boolean) :
+                    Object.keys(classNames).filter(key => (classNames as any)[key])
+            ).join(' ');
+            if (classes instanceof ReactiveValue) {
+                (classes as ReactiveValue<string[]>)
+                    .link(element, 'className', toClassName);
+            } else {
+                element.setAttribute('class', toClassName(classes!));
+            }
         } else {
             element.setAttribute('class', classes as string);
         }
@@ -32,7 +38,12 @@ export const directives = new Map<string, DirectiveHandler>([
         if (style && typeof style === 'object') {
             const { style: elementStyle } = element;
             Object.keys(style!).forEach(key => {
-                (elementStyle as any)[key] = (style as any)[key];
+                const value = (style as any)[key];
+                if (value instanceof ReactiveValue) {
+                    value.link(elementStyle, key);
+                } else {
+                    (elementStyle as any)[key] = value;
+                }
             });
         } else {
             element.setAttribute('style', style as string);
@@ -50,6 +61,8 @@ export const setAttributes = (element: HTMLElement, attributes: object) => {
         const value = (attributes as any)[key];
         if (directives.has(key)) {
             directives.get(key)!(element, value);
+        } else if (value instanceof ReactiveValue) {
+            value.link(element, key);
         } else {
             element.setAttribute(key, value);
         }
