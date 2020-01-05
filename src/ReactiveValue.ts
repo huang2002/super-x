@@ -1,6 +1,15 @@
 import { Reactive, ReactiveWatcher, ReactiveMapper } from "./Reactive";
+import { Utils } from "./Utils";
 
 export type ReactiveValueSetter<T> = (currentValue: T) => T;
+
+export type Key = string | number | symbol;
+
+export interface ReactiveLink<T, K extends Key, U> {
+    target: Record<K, U>;
+    key: K;
+    watcher: ReactiveWatcher<T>;
+}
 
 export interface ReactiveValueBinding<T> {
     event: string;
@@ -20,7 +29,7 @@ export class ReactiveValue<T> extends Reactive<T, T>{
     private _setters = new Array<ReactiveValueSetter<T>>();
     private _origin: ReactiveValue<any> | null = null;
     private _originWatcher: ReactiveWatcher<any> | null = null;
-    private _textWatchers = new Map<Text, ReactiveWatcher<T>>();
+    private _links = new Array<ReactiveLink<T, any, any>>();
     private _bindings = new Map<HTMLElement, ReactiveValueBinding<T>>();
 
     set(setter: ReactiveValueSetter<T>) {
@@ -66,29 +75,37 @@ export class ReactiveValue<T> extends Reactive<T, T>{
         return this;
     }
 
-    linkText(text: Text, mapper: ReactiveMapper<T, string> = String) {
-        if (!this._textWatchers.has(text)) {
-            text.data = mapper(this.current);
+    link<U extends Record<K, T>, K extends Key>(
+        target: U, key: K
+    ): U;
+    link<U extends Record<K, V>, K extends Key, V>(
+        target: U, key: K, mapper?: ReactiveMapper<T, V>
+    ): U;
+    link<U extends Record<K, T | V>, K extends Key, V>(
+        target: U, key: K, mapper?: ReactiveMapper<T, V>
+    ) {
+        if (!this._links.some(link => link.target === target && link.key === key)) {
+            target[key] = (mapper ? mapper(this.current) : this.current) as U[K];
             const watcher = (value: T) => {
-                text.data = mapper(value);
+                target[key] = (mapper ? mapper(value) : value) as U[K];
             };
-            this._textWatchers.set(text, watcher);
+            this._links.push({ target, key, watcher });
             this._watchers.push(watcher);
         }
-        return text;
+        return target;
     }
 
-    unlinkText(text: Text) {
-        const watcher = this._textWatchers.get(text);
-        if (watcher) {
-            this.unwatch(watcher);
-            this._textWatchers.delete(text);
+    unlink<U>(target: U, key: keyof U) {
+        const index = this._links.findIndex(link => link.target === target && link.key === key);
+        if (~index) {
+            this.unwatch(this._links[index].watcher);
+            Utils.removeIndex(this._links, index);
         }
         return this;
     }
 
-    toText(mapper: ReactiveMapper<T, string> = String) {
-        return this.linkText(document.createTextNode(''), mapper);
+    toText(mapper?: ReactiveMapper<T, string>) {
+        return this.link(document.createTextNode(''), 'data', mapper);
     }
 
     bind(element: HTMLElement) {
