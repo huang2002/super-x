@@ -3,7 +3,8 @@
 // @ts-ignore
 const { createElement: h } = X;
 
-const $title = new X.ReactiveValue('hello, world'),
+const $titleContent = new X.ReactiveValue('hello, world'),
+    $titleColor = new X.ReactiveValue('#000'),
     $count = new X.ReactiveValue(0),
     /** @type {X.ReactiveList<string>} */
     $list = new X.ReactiveList();
@@ -33,38 +34,35 @@ const AddItemOnce = () => h(
 
 document.body.style.padding = '.5em 1em';
 
+const labelStyle = 'display: inline-block; width: 7em; margin: .5em .2em;',
+    inputStyle = {
+        padding: '.2em .3em',
+        border: 'none',
+        boxShadow: '0 1px 0 #666'
+    };
+
 document.body.appendChild(X.Utils.createFragment([
-    h('h1', null, $title.map(title => `# ${title}`)),
+    h('h1', { style: { color: $titleColor } }, $titleContent.map(title => `# ${title}`)),
     h('form', { action: 'javascript:;', style: { marginBottom: '1em' } },
-        h('label', {
-            for: 'title-input',
-            style: 'display: inline-block; margin: .2em .6em;'
-        }, 'title content:'),
-        h('input', {
-            id: 'title-input',
-            style: {
-                padding: '.2em .3em',
-                border: 'none',
-                boxShadow: '0 1px 0 #666'
-            },
-            bind: $title
-        })
+        h('label', { for: 'color-input', style: labelStyle }, 'title color:'),
+        h('input', { id: 'color-input', style: inputStyle, bind: $titleColor }),
+        h('br'),
+        h('label', { for: 'content-input', style: labelStyle }, 'title content:'),
+        h('input', { id: 'content-input', style: inputStyle, bind: $titleContent })
     ),
-    h(
-        'button',
-        {
-            style: {
-                padding: '.5em 1em'
-            },
-            listeners: {
-                click() {
-                    $count.set(count => count + 1);
-                }
-            }
+    h('button', {
+        style: {
+            padding: '.5em 1em'
         },
+        listeners: {
+            click() {
+                $count.set(count => count + 1);
+            }
+        }
+    }, [
         'click count: ',
         $count
-    ),
+    ]),
     h('br'),
     AddItemOnce(),
     AddItemOnce(),
