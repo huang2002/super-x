@@ -47,4 +47,10 @@ export const Utils = {
         return document.createTextNode('');
     },
 
+    iterate<T>(object: { [key: string]: T; }, iterator: (key: string, value: T) => void) {
+        Object.keys(object).forEach(key => {
+            iterator(key, (object as any)[key]);
+        });
+    },
+
 } as const;

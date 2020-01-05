@@ -1,5 +1,6 @@
 import { ReactiveValue } from "./ReactiveValue";
 import { attachListeners, ListenerMap } from "./attachListeners";
+import { Utils } from "./Utils";
 
 export type DirectiveHandler = (element: HTMLElement, value: unknown) => void;
 
@@ -37,8 +38,7 @@ export const directives = new Map<string, DirectiveHandler>([
     ['style', (element, style) => {
         if (style && typeof style === 'object') {
             const { style: elementStyle } = element;
-            Object.keys(style!).forEach(key => {
-                const value = (style as any)[key];
+            Utils.iterate(style as any, (key, value) => {
                 if (value instanceof ReactiveValue) {
                     value.link(elementStyle, key);
                 } else {
@@ -57,8 +57,7 @@ export const directives = new Map<string, DirectiveHandler>([
 ]);
 
 export const setAttributes = (element: HTMLElement, attributes: object) => {
-    Object.keys(attributes).forEach(key => {
-        const value = (attributes as any)[key];
+    Utils.iterate(attributes as any, (key, value: string | ReactiveValue<any>) => {
         if (directives.has(key)) {
             directives.get(key)!(element, value);
         } else if (value instanceof ReactiveValue) {
