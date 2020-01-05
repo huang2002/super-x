@@ -44,3 +44,14 @@ export const directives = new Map<string, DirectiveHandler>([
     }],
 
 ]);
+
+export const setAttributes = (element: HTMLElement, attributes: object) => {
+    Object.keys(attributes).forEach(key => {
+        const value = (attributes as any)[key];
+        if (directives.has(key)) {
+            directives.get(key)!(element, value);
+        } else {
+            element.setAttribute(key, value);
+        }
+    });
+};
