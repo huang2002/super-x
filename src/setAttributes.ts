@@ -37,14 +37,7 @@ export const directives = new Map<string, DirectiveHandler>([
 
     ['style', (element, style) => {
         if (style && typeof style === 'object') {
-            const { style: elementStyle } = element;
-            Utils.iterate(style as any, (key, value) => {
-                if (value instanceof ReactiveValue) {
-                    value.link(elementStyle, key);
-                } else {
-                    (elementStyle as any)[key] = value;
-                }
-            });
+            Utils.setProperties(element.style, style as any);
         } else {
             element.setAttribute('style', style as string);
         }

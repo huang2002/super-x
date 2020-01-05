@@ -1,6 +1,10 @@
 import { ReactiveValue } from "./ReactiveValue";
 import { ReactiveList } from "./ReactiveList";
 
+export type ReactiveObject<T extends {}> = {
+    [K in keyof T]: T[K] | ReactiveValue<T[K]>;
+};
+
 export const Utils = {
 
     removeIndex(array: any[], index: number) {
@@ -50,6 +54,16 @@ export const Utils = {
     iterate<T>(object: { [key: string]: T; }, iterator: (key: string, value: T) => void) {
         Object.keys(object).forEach(key => {
             iterator(key, (object as any)[key]);
+        });
+    },
+
+    setProperties<T extends {}>(object: T, properties: Partial<ReactiveObject<T>>) {
+        Utils.iterate(properties, (key, value) => {
+            if (value instanceof ReactiveValue) {
+                value.link(object, key);
+            } else {
+                (object as any)[key] = value;
+            }
         });
     },
 
