@@ -4,5 +4,5 @@ export * from "./Reactive";
 export * from "./ReactiveValue";
 export * from "./ReactiveList";
 export * from "./attachListeners";
-export * from "./setAttribute";
+export * from "./setAttributes";
 export * from "./createElement";

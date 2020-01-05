@@ -1,5 +1,5 @@
 import { Utils } from "./Utils";
-import { setAttributes } from "./setAttribute";
+import { setAttributes } from "./setAttributes";
 
 export const createElement = (tag: string, attributes?: object | null, ...children: unknown[]) => {
     const element = document.createElement(tag);
