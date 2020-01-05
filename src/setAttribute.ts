@@ -51,7 +51,7 @@ export const directives = new Map<string, DirectiveHandler>([
     }],
 
     ['ref', (element, reference) => {
-        (reference as ReactiveValue<Element>).setSync(element);
+        (reference as ReactiveValue<HTMLElement>).setSync(element);
     }],
 
 ]);
