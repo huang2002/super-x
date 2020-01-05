@@ -88,7 +88,7 @@ export class ReactiveValue<T> extends Reactive<T, T>{
     }
 
     toText(mapper: ReactiveMapper<T, string> = String) {
-        return this.linkText(document.createTextNode(''));
+        return this.linkText(document.createTextNode(''), mapper);
     }
 
     bind(element: HTMLElement) {
