@@ -21,7 +21,7 @@ const ListItem = ({ item, index, $list }) => h(
 function TodoApp() {
     // init the item list and the input element reference
     const $list = new X.ReactiveList(),
-        $inputRef = new X.ReactiveValue();
+        $inputRef = new X.ReactiveValue(null);
     // submission handler
     function submit() {
         const input = $inputRef.current,
