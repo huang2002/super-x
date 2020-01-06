@@ -9,6 +9,8 @@ const $titleContent = new X.ReactiveValue('hello, world'),
     /** @type {X.ReactiveList<string>} */
     $list = new X.ReactiveList();
 
+document.body.style.padding = '.5em 1em';
+
 const ADD_ITEM_ONCE_CLASS = X.createClass({
     marginTop: '1em',
     marginRight: '.5em',
@@ -34,7 +36,29 @@ const AddItemOnce = () => h(
     'add item once'
 );
 
-document.body.style.padding = '.5em 1em';
+const LINE_THROUGH_CLASS = X.createClass({
+    textDecoration: 'line-through'
+});
+
+function Item(content) {
+    const $class = new X.ReactiveValue([]);
+    return h(
+        'li',
+        {
+            class: $class,
+            listeners: {
+                click() {
+                    $class.set(
+                        classes => classes.length ?
+                            [] :
+                            [LINE_THROUGH_CLASS]
+                    );
+                }
+            }
+        },
+        content
+    );
+}
 
 const LABEL_CLASS = X.createClass({
     display: 'inline-block',
@@ -70,5 +94,5 @@ document.body.appendChild(X.Utils.createFragment([
     AddItemOnce(),
     AddItemOnce(),
     AddItemOnce(),
-    $list.toElement('ul', item => h('li', null, item))
+    $list.toElement('ul', Item)
 ]));
