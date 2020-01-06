@@ -9,14 +9,16 @@ const $titleContent = new X.ReactiveValue('hello, world'),
     /** @type {X.ReactiveList<string>} */
     $list = new X.ReactiveList();
 
+const ADD_ITEM_ONCE_CLASS = X.createClass({
+    marginTop: '1em',
+    marginRight: '.5em',
+    padding: '.3em .6em'
+});
+
 const AddItemOnce = () => h(
     'button',
     {
-        style: {
-            marginTop: '1em',
-            marginRight: '.5em',
-            padding: '.3em .6em'
-        },
+        class: ADD_ITEM_ONCE_CLASS,
         listeners: {
             click: {
                 listener(event) {
@@ -34,26 +36,27 @@ const AddItemOnce = () => h(
 
 document.body.style.padding = '.5em 1em';
 
-const labelStyle = 'display: inline-block; width: 7em; margin: .5em .2em;',
-    inputStyle = {
-        padding: '.2em .3em',
-        border: 'none',
-        boxShadow: '0 1px 0 #666'
-    };
+const LABEL_CLASS = X.createClass({
+    display: 'inline-block',
+    width: '7em',
+    margin: '.5em .2em;'
+}), INPUT_CLASS = X.createClass({
+    padding: '.2em .3em',
+    border: 'none',
+    boxShadow: '0 1px 0 #666'
+});
 
 document.body.appendChild(X.Utils.createFragment([
     h('h1', { style: { color: $titleColor } }, $titleContent.map(title => `# ${title}`)),
     h('form', { action: 'javascript:;', style: { marginBottom: '1em' } },
-        h('label', { for: 'color-input', style: labelStyle }, 'title color:'),
-        h('input', { id: 'color-input', style: inputStyle, bind: $titleColor }),
+        h('label', { for: 'color-input', class: LABEL_CLASS }, 'title color:'),
+        h('input', { id: 'color-input', class: INPUT_CLASS, bind: $titleColor }),
         h('br'),
-        h('label', { for: 'content-input', style: labelStyle }, 'title content:'),
-        h('input', { id: 'content-input', style: inputStyle, bind: $titleContent })
+        h('label', { for: 'content-input', class: LABEL_CLASS }, 'title content:'),
+        h('input', { id: 'content-input', class: INPUT_CLASS, bind: $titleContent })
     ),
     h('button', {
-        style: {
-            padding: '.5em 1em'
-        },
+        style: 'padding: .5em 1em;',
         listeners: {
             click() {
                 $count.set(count => count + 1);
