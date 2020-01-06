@@ -10,7 +10,7 @@ export const directives = new Map<string, DirectiveHandler>([
         (reactiveValue as ReactiveValue<string>).bind(element);
     }],
 
-    ['classes', (element, classes) => {
+    ['class', (element, classes) => {
         if (!classes) {
             element.setAttribute('class', '');
         }
