@@ -1,3 +1,8 @@
+## 0.8.0 - 2020-01-07
+
+- Add `toReactive`
+- Improve `ReactiveList` typing
+
 ## 0.7.0 - 2020-01-06
 
 - Add component styling APIs
