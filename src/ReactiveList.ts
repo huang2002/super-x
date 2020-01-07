@@ -8,13 +8,13 @@ export type ReactiveListEvent<T> =
     { type: 'insert', index: number, value: T } |
     { type: 'push', value: T } |
     { type: 'delete', index: number } |
-    { type: 'setSync', list: T[] };
+    { type: 'setSync', list: readonly T[] };
 
-export class ReactiveList<T> extends Reactive<T[], ReactiveListEvent<T>> {
+export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>> {
 
     static defaultTag = 'ul';
 
-    constructor(initialList?: T[]) {
+    constructor(initialList?: readonly T[]) {
         super(initialList || []);
     }
 
@@ -55,7 +55,7 @@ export class ReactiveList<T> extends Reactive<T[], ReactiveListEvent<T>> {
         return this._emit({ type: 'delete', index: 0 });
     }
 
-    setSync(list: T[]) {
+    setSync(list: readonly T[]) {
         this._events.length = 0;
         this.current = list;
         return this._emit({ type: 'setSync', list: list.slice() });
@@ -66,16 +66,16 @@ export class ReactiveList<T> extends Reactive<T[], ReactiveListEvent<T>> {
         this._events.forEach(event => {
             switch (event.type) {
                 case 'replace':
-                    current[event.index] = event.value;
+                    (current as T[])[event.index] = event.value;
                     break;
                 case 'insert':
-                    Utils.insertIndex(current, event.index, event.value);
+                    Utils.insertIndex(current as T[], event.index, event.value);
                     break;
                 case 'push':
-                    current.push(event.value);
+                    (current as T[]).push(event.value);
                     break;
                 case 'delete':
-                    Utils.removeIndex(current, event.index);
+                    Utils.removeIndex((current as T[]), event.index);
                     break;
             }
             _watchers.forEach(watcher => {
