@@ -3,11 +3,13 @@
 // @ts-ignore
 const { createElement: h } = X;
 
-const $titleContent = new X.ReactiveValue('hello, world'),
-    $titleColor = new X.ReactiveValue('#000'),
-    $count = new X.ReactiveValue(0),
-    /** @type {X.ReactiveList<string>} */
-    $list = new X.ReactiveList();
+const $title = X.toReactive({
+    content: 'hello, world',
+    color: '#00F'
+});
+const $count = X.toReactive(0);
+/** @type {X.ReactiveList<string>} */
+const $list = X.toReactive([]);
 
 document.body.style.padding = '.5em 1em';
 
@@ -71,13 +73,13 @@ const LABEL_CLASS = X.createClass({
 });
 
 document.body.appendChild(X.Utils.createFragment([
-    h('h1', { style: { color: $titleColor } }, $titleContent.map(title => `# ${title}`)),
+    h('h1', { style: { color: $title.color } }, $title.content.map(title => `# ${title}`)),
     h('form', { action: 'javascript:;', style: { marginBottom: '1em' } },
         h('label', { for: 'color-input', class: LABEL_CLASS }, 'title color:'),
-        h('input', { id: 'color-input', class: INPUT_CLASS, bind: $titleColor }),
+        h('input', { id: 'color-input', class: INPUT_CLASS, bind: $title.color }),
         h('br'),
         h('label', { for: 'content-input', class: LABEL_CLASS }, 'title content:'),
-        h('input', { id: 'content-input', class: INPUT_CLASS, bind: $titleContent })
+        h('input', { id: 'content-input', class: INPUT_CLASS, bind: $title.content })
     ),
     h('button', {
         style: 'padding: .5em 1em;',
