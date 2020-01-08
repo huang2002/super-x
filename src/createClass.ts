@@ -12,16 +12,20 @@ export interface StyleProperties {
     [key: string]: string | ReactiveValue<string>;
 }
 
-export const createClass = (properties: StyleProperties) => {
+export const insertStyle = (selector: string, properties: StyleProperties) => {
     if (!_stylesheet) {
         const styleElement = document.getElementById(STYLE_ID) ||
             document.head.appendChild(createElement('style', { id: STYLE_ID }));
         _stylesheet = (styleElement as HTMLStyleElement).sheet as CSSStyleSheet;
     }
-    const className = classPrefix + _id++,
-        ruleIndex = _stylesheet.cssRules.length;
-    _stylesheet.insertRule(`.${className}{}`, ruleIndex);
+    const ruleIndex = _stylesheet.cssRules.length;
+    _stylesheet.insertRule(`${selector}{}`, ruleIndex);
     const style = (_stylesheet.cssRules[ruleIndex] as CSSStyleRule).style;
     Utils.setProperties(style, properties);
+};
+
+export const createClass = (properties: StyleProperties) => {
+    const className = classPrefix + _id++;
+    insertStyle('.' + className, properties);
     return className;
 };
