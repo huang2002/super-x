@@ -1,3 +1,7 @@
+## 0.9.0 - 2020-01-08
+
+- Add `insertStyle`
+
 ## 0.8.0 - 2020-01-07
 
 - Add `toReactive`
