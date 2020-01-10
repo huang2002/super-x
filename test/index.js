@@ -61,17 +61,17 @@ function Item(content) {
 }
 
 const LABEL_CLASS = X.createClass({
-        display: 'inline-block',
-        width: '7em',
-        margin: '.5em .2em;'
-    }),
-    INPUT_CLASS = X.createClass({
-        padding: '.2em .3em',
-        border: 'none',
-        boxShadow: '0 1px 0 #666'
-    });
+    display: 'inline-block',
+    width: '7em',
+    margin: '.5em .2em;'
+}), INPUT_CLASS = X.createClass({
+    padding: '.2em .3em',
+    border: 'none',
+    boxShadow: '0 1px 0 #666',
+    outline: 'none'
+});
 
-X.insertRule(`.${INPUT_CLASS}:focus`, {
+X.insertStyle(`.${INPUT_CLASS}:focus`, {
     boxShadow: '0 1px 0 #111'
 });
 
