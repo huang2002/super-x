@@ -1,14 +1,14 @@
-import { Reactive, ReactiveWatcher, ReactiveMapper } from "./Reactive";
+import { Reactive, ReactiveWatcher, ReactiveMapper, ReactiveGetter } from "./Reactive";
 import { Utils } from "./Utils";
 import { ReactiveValue } from "./ReactiveValue";
 
 export type ReactiveListMapper<T, U> = (originalValue: T, index: number) => U;
 
 export type ReactiveListEvent<T> =
-    { type: 'replace', index: number, value: T } |
+    { type: 'replace', index: number, value: T, callback?: ReactiveGetter<T> } |
     { type: 'insert', index: number, value: T } |
     { type: 'push', value: T } |
-    { type: 'delete', index: number } |
+    { type: 'delete', index: number, callback?: ReactiveGetter<T> } |
     { type: 'setSync', list: readonly T[] };
 
 export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>> {
@@ -28,8 +28,8 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
         return this;
     }
 
-    replace(index: number, value: T) {
-        return this._emit({ type: 'replace', index, value });
+    replace(index: number, value: T, callback?: ReactiveGetter<T>) {
+        return this._emit({ type: 'replace', index, value, callback });
     }
 
     insert(index: number, value: T) {
@@ -44,16 +44,16 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
         return this._emit({ type: 'push', value });
     }
 
-    delete(index: number) {
-        return this._emit({ type: 'delete', index });
+    delete(index: number, callback?: ReactiveGetter<T>) {
+        return this._emit({ type: 'delete', index, callback });
     }
 
-    pop() {
-        return this._emit({ type: 'delete', index: this.current.length - 1 });
+    pop(callback?: ReactiveGetter<T>) {
+        return this._emit({ type: 'delete', index: this.current.length - 1, callback });
     }
 
-    shift() {
-        return this._emit({ type: 'delete', index: 0 });
+    shift(callback?: ReactiveGetter<T>) {
+        return this._emit({ type: 'delete', index: 0, callback });
     }
 
     setSync(list: readonly T[]) {
@@ -67,6 +67,9 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
         this._events.forEach(event => {
             switch (event.type) {
                 case 'replace':
+                    if (event.callback) {
+                        event.callback((current as T[])[event.index]);
+                    }
                     (current as T[])[event.index] = event.value;
                     break;
                 case 'insert':
@@ -76,6 +79,9 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
                     (current as T[]).push(event.value);
                     break;
                 case 'delete':
+                    if (event.callback) {
+                        event.callback((current as T[])[event.index]);
+                    }
                     Utils.removeIndex((current as T[]), event.index);
                     break;
             }
