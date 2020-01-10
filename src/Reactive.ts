@@ -29,6 +29,14 @@ export abstract class Reactive<T, U> {
         this._setSchedule();
         return this;
     }
+    
+    unget(getter: ReactiveGetter<T>) {
+        const index = this._getters.indexOf(getter);
+        if (~index) {
+            Utils.removeIndex(this._watchers, index);
+        }
+        return this;
+    }
 
     watch(watcher: ReactiveWatcher<U>) {
         this._watchers.push(watcher);
