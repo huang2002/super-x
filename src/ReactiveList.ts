@@ -1,5 +1,6 @@
 import { Reactive, ReactiveWatcher } from "./Reactive";
 import { Utils } from "./Utils";
+import { ReactiveValue } from "./ReactiveValue";
 
 export type ReactiveListMapper<T, U> = (originalValue: T, index: number) => U;
 
@@ -86,6 +87,14 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
         this._getters.forEach(getter => {
             getter(current);
         });
+    }
+
+    toValue() {
+        const value = new ReactiveValue(this.current);
+        value.linkOrigin(this, () => {
+            value.setSync(this.current);
+        });
+        return value;
     }
 
     linkElement(element: HTMLElement, mapper: ReactiveListMapper<T, Node> = Utils.toNode) {
