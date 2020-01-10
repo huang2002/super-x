@@ -1,3 +1,7 @@
+## 0.11.0 - 2020-01-10
+
+- Add mapper to `reactiveList.toValue`
+
 ## 0.10.0 - 2020-01-10
 
 - Add `reactiveList.toValue`
