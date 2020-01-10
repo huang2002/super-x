@@ -19,14 +19,17 @@ const ADD_ITEM_ONCE_CLASS = X.createClass({
     padding: '.3em .6em'
 });
 
-const AddItemOnce = () => h(
+/**
+ * @param {number} id
+ */
+const AddItemOnce = id => h(
     'button',
     {
         class: ADD_ITEM_ONCE_CLASS,
         listeners: {
             click: {
                 listener(event) {
-                    $list.push('list item');
+                    $list.push('item-' + id);
                     event.target.style.color = '#666';
                 },
                 options: {
@@ -35,7 +38,7 @@ const AddItemOnce = () => h(
             }
         }
     },
-    'add item once'
+    'add item ' + id
 );
 
 const LINE_THROUGH_CLASS = X.createClass({
@@ -47,9 +50,9 @@ function Item(content) {
     return h(
         'li',
         {
-            class: {
-                [LINE_THROUGH_CLASS]: $lineThrough
-            },
+            class: $lineThrough.map(lineThrough => ({
+                [LINE_THROUGH_CLASS]: lineThrough
+            })),
             listeners: {
                 click() {
                     $lineThrough.set(lineThrough => !lineThrough);
@@ -96,8 +99,12 @@ document.body.appendChild(X.Utils.createFragment([
         $count
     ]),
     h('br'),
-    AddItemOnce(),
-    AddItemOnce(),
-    AddItemOnce(),
-    $list.toElement('ul', Item)
+    AddItemOnce(0),
+    AddItemOnce(1),
+    AddItemOnce(2),
+    $list.toElement('ul', Item),
+    h('p', null,
+        '$list: ',
+        $list.toValue().map(list => list.join(', '))
+    )
 ]));
