@@ -27,7 +27,7 @@ export class ReactiveValue<T> extends Reactive<T, T>{
     }
 
     private _setters = new Array<ReactiveValueSetter<T>>();
-    private _origin: ReactiveValue<any> | null = null;
+    private _origin: Reactive<any> | null = null;
     private _originWatcher: ReactiveWatcher<any> | null = null;
     private _links = new Array<ReactiveLink<T, any, any>>();
     private _bindings = new Map<HTMLElement, ReactiveValueBinding<T>>();
