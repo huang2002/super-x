@@ -31,6 +31,7 @@ export class ReactiveValue<T> extends Reactive<T, T>{
     private _originWatcher: ReactiveWatcher<any> | null = null;
     private _links = new Array<ReactiveLink<T, any, any>>();
     private _bindings = new Map<HTMLElement, ReactiveValueBinding<T>>();
+    private _nodeWatchers = new Map<Node, ReactiveWatcher<T>>();
 
     set(setter: ReactiveValueSetter<T>) {
         this._setters.push(setter);
@@ -115,6 +116,36 @@ export class ReactiveValue<T> extends Reactive<T, T>{
 
     toText(mapper?: ReactiveMapper<T, string>) {
         return this.link(document.createTextNode(''), 'data', mapper);
+    }
+
+    linkNode(node: Node, mapper: ReactiveMapper<T, Node> = Utils.toNode) {
+        if (!this._nodeWatchers.has(node)) {
+            let oldNode = node;
+            const watcher = (value: T) => {
+                if (oldNode.parentNode) {
+                    const newNode = mapper(value);
+                    oldNode.parentNode.replaceChild(newNode, oldNode);
+                    oldNode = newNode;
+                }
+            };
+            this._watchers.push(watcher);
+            this._nodeWatchers.set(node, watcher);
+            watcher(this.current);
+        }
+        return node;
+    }
+
+    unlinkNode(node: Node) {
+        const watcher = this._nodeWatchers.get(node);
+        if (watcher) {
+            this.unwatch(watcher);
+            this._nodeWatchers.delete(node);
+        }
+        return this;
+    }
+
+    toNode(mapper: ReactiveMapper<T, Node> = Utils.toNode) {
+        return this.linkNode(mapper(this.current), mapper);
     }
 
     bind(element: HTMLElement) {

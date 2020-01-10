@@ -96,7 +96,7 @@ document.body.appendChild(X.Utils.createFragment([
         }
     }, [
         'click count: ',
-        $count
+        $count.toText()
     ]),
     h('br'),
     AddItemOnce(0),
@@ -105,6 +105,6 @@ document.body.appendChild(X.Utils.createFragment([
     $list.toElement('ul', Item),
     h('p', null,
         '$list: ',
-        $list.toValue(list => list.join(', '))
+        $list.toValue(list => h('span', null, list.join(', ')))
     )
 ]));

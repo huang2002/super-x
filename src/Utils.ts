@@ -43,7 +43,7 @@ export const Utils = {
                 if (value instanceof Node) {
                     return value;
                 } else if (value instanceof ReactiveValue) {
-                    return value.toText();
+                    return value.toNode();
                 } else if (value instanceof ReactiveList) {
                     return value.toElement();
                 }
