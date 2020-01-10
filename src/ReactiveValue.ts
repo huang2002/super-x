@@ -58,12 +58,21 @@ export class ReactiveValue<T> extends Reactive<T, T>{
     }
 
     map<U>(mapper: ReactiveMapper<T, U>) {
-        const reactive = new ReactiveValue(mapper(this.current));
-        reactive._origin = this;
-        this._watchers.push(reactive._originWatcher = originalValue => {
-            reactive.setSync(mapper(originalValue));
+        const value = new ReactiveValue(mapper(this.current));
+        value.linkOrigin(this, originalValue => {
+            value.setSync(mapper(originalValue));
         });
-        return reactive;
+        return value;
+    }
+
+    linkOrigin<T>(origin: Reactive<any, T>, watcher: ReactiveWatcher<T>) {
+        if (this._origin) {
+            this.unlinkOrigin();
+        }
+        this._origin = origin;
+        this._originWatcher = watcher;
+        origin.watch(watcher);
+        return this;
     }
 
     unlinkOrigin() {
