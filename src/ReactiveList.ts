@@ -1,4 +1,4 @@
-import { Reactive, ReactiveWatcher } from "./Reactive";
+import { Reactive, ReactiveWatcher, ReactiveMapper } from "./Reactive";
 import { Utils } from "./Utils";
 import { ReactiveValue } from "./ReactiveValue";
 
@@ -89,10 +89,12 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
         });
     }
 
-    toValue() {
-        const value = new ReactiveValue(this.current);
+    toValue(): ReactiveValue<readonly T[]>;
+    toValue<U>(mapper?: ReactiveMapper<readonly T[], U>): ReactiveValue<U>;
+    toValue<U>(mapper?: ReactiveMapper<readonly T[], U>) {
+        const value = new ReactiveValue(mapper ? mapper(this.current) : this.current);
         value.linkOrigin(this, () => {
-            value.setSync(this.current);
+            value.setSync(mapper ? mapper(this.current) : this.current);
         });
         return value;
     }

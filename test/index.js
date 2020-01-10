@@ -105,6 +105,6 @@ document.body.appendChild(X.Utils.createFragment([
     $list.toElement('ul', Item),
     h('p', null,
         '$list: ',
-        $list.toValue().map(list => list.join(', '))
+        $list.toValue(list => list.join(', '))
     )
 ]));
