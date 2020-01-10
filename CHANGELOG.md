@@ -1,3 +1,7 @@
+## 0.12.0 - 2020-01-10
+
+- Add optional callbacks to reactive list methods
+
 ## 0.11.0 - 2020-01-10
 
 - Add mapper to `reactiveList.toValue`
