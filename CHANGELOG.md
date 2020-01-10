@@ -1,3 +1,9 @@
+## 0.10.0 - 2020-01-10
+
+- Add `reactiveList.toValue`
+- Add `reactiveValue.linkOrigin`
+- Add `reactive.unget`
+
 ## 0.9.0 - 2020-01-08
 
 - Add `insertStyle`
