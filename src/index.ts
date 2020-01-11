@@ -8,3 +8,4 @@ export * from "./attachListeners";
 export * from "./setAttributes";
 export * from "./createElement";
 export * from "./createClass";
+export * from "./createComponent";

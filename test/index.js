@@ -45,23 +45,61 @@ const LINE_THROUGH_CLASS = X.createClass({
     textDecoration: 'line-through'
 });
 
-function Item(content) {
-    const $lineThrough = new X.ReactiveValue(false);
-    return h(
-        'li',
-        {
-            class: $lineThrough.map(lineThrough => ({
-                [LINE_THROUGH_CLASS]: lineThrough
-            })),
-            listeners: {
-                click() {
-                    $lineThrough.set(lineThrough => !lineThrough);
+const Item = X.createComponent(
+    /**
+     * @param {X.ReactiveValue<string>} $content
+     * @param {X.ReactiveValue<number>} $index
+     */
+    ($content, $index) => {
+        const $finished = new X.ReactiveValue(false);
+        return h('li', null,
+            $index.toText(index => `#${index} `),
+            h('span', {
+                class: $finished.map(finished => ({
+                    [LINE_THROUGH_CLASS]: finished
+                }))
+            },
+                $content.toText()
+            ),
+            ' ',
+            h('a', {
+                href: 'javascript:;',
+                listeners: {
+                    click() {
+                        $finished.set(finished => !finished);
+                    }
                 }
-            }
-        },
-        content
-    );
-}
+            },
+                $finished.toText(finished => finished ? 'unmark' : 'mark')
+            ),
+            ' ',
+            h('a', {
+                href: 'javascript:;',
+                listeners: {
+                    click() {
+                        const newContent = prompt('new content', $content.current);
+                        if (newContent) {
+                            $list.replace($index, newContent);
+                        }
+                    }
+                }
+            },
+                'modify'
+            ),
+            ' ',
+            h('a', {
+                href: 'javascript:;',
+                listeners: {
+                    click() {
+                        $list.delete($index);
+                    }
+                }
+            },
+                'delete'
+            ),
+        );
+    }
+);
 
 const LABEL_CLASS = X.createClass({
     display: 'inline-block',

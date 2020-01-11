@@ -1,5 +1,6 @@
 import { Reactive, ReactiveWatcher, ReactiveMapper } from "./Reactive";
 import { Utils } from "./Utils";
+import { Component } from "./createComponent";
 
 export type ReactiveValueSetter<T> = (currentValue: T) => T;
 
@@ -120,12 +121,17 @@ export class ReactiveValue<T> extends Reactive<T, T>{
 
     linkNode(node: Node, mapper: ReactiveMapper<T, Node> = Utils.toNode) {
         if (!this._nodeWatchers.has(node)) {
+            const isComponent = (mapper as Component<any, [], Node>)._isComponent;
             let oldNode = node;
             const watcher = (value: T) => {
                 if (oldNode.parentNode) {
-                    const newNode = mapper(value);
-                    oldNode.parentNode.replaceChild(newNode, oldNode);
-                    oldNode = newNode;
+                    if (oldNode !== node && isComponent) {
+                        (mapper as Component<any, [], Node>).patch(oldNode, value);
+                    } else {
+                        const newNode = mapper(value);
+                        oldNode.parentNode.replaceChild(newNode, oldNode);
+                        oldNode = newNode;
+                    }
                 }
             };
             this._watchers.push(watcher);
@@ -138,6 +144,9 @@ export class ReactiveValue<T> extends Reactive<T, T>{
     unlinkNode(node: Node) {
         const watcher = this._nodeWatchers.get(node);
         if (watcher) {
+            if ((watcher as Component<any, [], Node>)._isComponent) {
+                (watcher as Component<any, [], Node>).destroy(node);
+            }
             this.unwatch(watcher);
             this._nodeWatchers.delete(node);
         }
