@@ -79,7 +79,7 @@ export const Utils = {
         });
     },
 
-    destory(value: object) {
+    destroy(value: object) {
         if (value instanceof ReactiveValue) {
             value.unlinkOrigin();
         } else {
@@ -88,7 +88,7 @@ export const Utils = {
                     if (property instanceof ReactiveValue) {
                         property.unlinkOrigin();
                     } else {
-                        Utils.destory(property!);
+                        Utils.destroy(property!);
                     }
                 }
             });

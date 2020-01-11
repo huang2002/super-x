@@ -54,7 +54,7 @@ export const createComponent = <
     component.destroy = node => {
         const $options = optionMap.get(node);
         if ($options) {
-            Utils.destory($options);
+            Utils.destroy($options);
             optionMap.delete(node);
         }
     };
