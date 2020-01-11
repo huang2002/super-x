@@ -1,3 +1,12 @@
+## 0.13.0 - 2020-01-11
+
+- Add Component APIs
+- Add `Utils.destroy`
+- Add `reactiveValue.linkNode` & `reactiveValue.unlinkNode`
+- Modify `ReactiveList` APIs
+- Improve `Utils.setProperties`
+- Fix node updating issues in `ReactiveList`
+
 ## 0.12.0 - 2020-01-10
 
 - Add optional callbacks to reactive list methods
