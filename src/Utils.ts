@@ -79,4 +79,23 @@ export const Utils = {
         });
     },
 
+    destory(value: unknown) {
+        if (!value || typeof value !== 'object') {
+            return;
+        }
+        if (value instanceof ReactiveValue) {
+            value.unlinkOrigin();
+        } else {
+            Utils.iterate(value as any, (key, property) => {
+                if (property && typeof property === 'object') {
+                    if (property instanceof ReactiveValue) {
+                        property.unlinkOrigin();
+                    } else {
+                        Utils.destory(property!);
+                    }
+                }
+            });
+        }
+    },
+
 } as const;
