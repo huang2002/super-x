@@ -59,10 +59,22 @@ export const Utils = {
 
     setProperties<T extends {}>(object: T, properties: Partial<ReactiveObject<T>>) {
         Utils.iterate(properties, (key, value) => {
-            if (value instanceof ReactiveValue) {
-                value.link(object, key);
+            const originalValue = (object as any)[key],
+                valueIsReactive = value instanceof ReactiveValue;
+            if (originalValue instanceof ReactiveValue) {
+                if (valueIsReactive) {
+                    originalValue.linkOrigin(value as ReactiveValue<unknown>, newValue => {
+                        originalValue.setSync(newValue);
+                    });
+                } else {
+                    originalValue.setSync(value);
+                }
             } else {
-                (object as any)[key] = value;
+                if (valueIsReactive) {
+                    (value as ReactiveValue<unknown>).link(object, key);
+                } else {
+                    (object as any)[key] = value;
+                }
             }
         });
     },
