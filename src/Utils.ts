@@ -79,10 +79,7 @@ export const Utils = {
         });
     },
 
-    destory(value: unknown) {
-        if (!value || typeof value !== 'object') {
-            return;
-        }
+    destory(value: object) {
         if (value instanceof ReactiveValue) {
             value.unlinkOrigin();
         } else {
