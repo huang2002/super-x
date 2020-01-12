@@ -1,27 +1,31 @@
 const h = X.createElement;
 
-const ListItem = ({ item, index, $list }) => h(
+// the item list
+const $list = X.toReactive([]);
+
+const ListItem = X.createComponent(($item, $index) => h(
     'li',
     {
         style: {
-            textDecoration: item.finished ? 'line-through' : 'none'
+            textDecoration: $item.finished.map(
+                finished => finished ? 'line-through' : 'none'
+            )
         },
         listeners: {
             click() {
-                $list.replace(index, {
-                    content: item.content,
-                    finished: !item.finished
+                $list.replace($index, {
+                    content: $item.content.current,
+                    finished: !$item.finished.current
                 });
             }
         }
     },
-    item.content
-);
+    $item.content.toText()
+));
 
 function TodoApp() {
-    // init the item list and the input element reference
-    const $list = new X.ReactiveList(),
-        $inputRef = new X.ReactiveValue(null);
+    // the input element reference
+    const $inputRef = new X.ReactiveValue(null);
     // submission handler
     function submit() {
         const input = $inputRef.current,
@@ -40,7 +44,7 @@ function TodoApp() {
             h('input', { ref: $inputRef, placeholder: 'content' }),
             h('input', { type: 'submit', value: 'add' })
         ),
-        $list.toElement('ul', (item, index) => ListItem({ item, index, $list }))
+        $list.toElement('ul', ListItem)
     ]);
 }
 
