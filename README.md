@@ -4,7 +4,7 @@
 
 ## Introduction
 
-`super-x` is a reactive UI lib which aims at being lightweight. To create interactive UIs, just declare them in a reactive way, and this lib will do the rest.
+`super-x` is a reactive UI lib which aims at being lightweight. To create interactive UIs, just declare them in a reactive way, and this lib will do the rest. More specifically, instead of using diff algorithm to find out what needs to be updated, `super-x` employs reactive declaration to directly declare reactive data in views.
 
 ## Links
 
