@@ -1,7 +1,7 @@
 import { ReactiveValue } from "./ReactiveValue";
 import { ReactiveList } from "./ReactiveList";
 
-export type ReactiveObject<T extends {}> = {
+export type ReactiveObject<T extends object> = {
     [K in keyof T]: T[K] | ReactiveValue<T[K]>;
 };
 
@@ -57,7 +57,7 @@ export const Utils = {
         });
     },
 
-    setProperties<T extends {}>(object: T, properties: Partial<ReactiveObject<T>>) {
+    setProperties<T extends object>(object: T, properties: Partial<ReactiveObject<T>>) {
         Utils.iterate(properties, (key, value) => {
             const originalValue = (object as any)[key],
                 valueIsReactive = value instanceof ReactiveValue;
