@@ -95,4 +95,30 @@ export const Utils = {
         }
     },
 
+    isEqual(a: unknown, b: unknown) {
+        if (Object.is(a, b)) {
+            return true;
+        } else if (Array.isArray(a) && Array.isArray(b) && a.length === b.length) {
+            return a.every((v, i) => Object.is(v, b[i]));
+        } else if (typeof a === 'object' && typeof b === 'object' && a && b) {
+            if (a instanceof Node) {
+                if (b instanceof Node) {
+                    return a.isEqualNode(b);
+                } else {
+                    return false;
+                }
+            } else if (b instanceof Node) {
+                return false;
+            }
+            const keysA = Object.keys(a),
+                keysB = Object.keys(b);
+            if (keysA.length !== keysB.length) {
+                return false;
+            }
+            return keysA.every(
+                k => keysB.includes(k) && Object.is((a as any)[k], (b as any)[k])
+            );
+        }
+    },
+
 } as const;
