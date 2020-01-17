@@ -71,7 +71,7 @@ export const Utils = {
                 }
             } else {
                 if (valueIsReactive) {
-                    (value as ReactiveValue<unknown>).link(object, key);
+                    (value as ReactiveValue<unknown>).link(object as Record<string, unknown>, key);
                 } else {
                     (object as any)[key] = value;
                 }
