@@ -1,3 +1,9 @@
+## 0.14.0 - 2020-01-17
+
+- Add `Utils.isEqual`
+- Add value comparison
+- Improve typings
+
 ## 0.13.0 - 2020-01-11
 
 - Add Component APIs
