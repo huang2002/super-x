@@ -118,6 +118,8 @@ export const Utils = {
             return keysA.every(
                 k => keysB.includes(k) && Object.is((a as any)[k], (b as any)[k])
             );
+        } else {
+            return false;
         }
     },
 
