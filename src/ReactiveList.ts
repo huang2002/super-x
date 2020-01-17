@@ -24,6 +24,7 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
         }
     }
 
+    isEqual = Utils.isEqual;
     private _events = new Array<ReactiveListEvent<T>>();
     private _elementWatchers = new Map<HTMLElement, ReactiveWatcher<ReactiveListEvent<T>>>();
     private _$indices = new Array<ReactiveValue<number>>();
@@ -64,6 +65,9 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
 
     setSync(list: readonly T[]) {
         this._events.length = 0;
+        if (this.isEqual(this.current, list)) {
+            return this;
+        }
         this.current = list;
         return this._emit({ type: 'setSync', list: list.slice() });
     }
@@ -71,18 +75,17 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
     update() {
         const { current, _watchers, _$indices } = this;
         this._events.forEach(event => {
-            /* const index = (event.type !== 'push' && event.type !== 'setSync' && (
-                event.index instanceof ReactiveValue ? event.index.current : event.index
-            )) as number; */
             if ((event as any).index instanceof ReactiveValue) {
                 (event as any).index = ((event as any).index as ReactiveValue<number>).current;
             }
             switch (event.type) {
                 case 'replace':
                     if (event.callback) {
-                        event.callback((current as T[])[event.index]);
+                        event.callback(current[event.index]);
                     }
-                    (current as T[])[event.index] = event.value;
+                    if (!this.isEqual(current[event.index], event.value)) {
+                        (current as T[])[event.index] = event.value;
+                    }
                     break;
                 case 'insert':
                     Utils.insertIndex(current as T[], event.index, event.value);
@@ -97,7 +100,7 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
                     break;
                 case 'delete':
                     if (event.callback) {
-                        event.callback((current as T[])[event.index]);
+                        event.callback(current[event.index]);
                     }
                     Utils.removeIndex((current as T[]), event.index);
                     for (let i = event.index + 1; i < _$indices.length; i++) {

@@ -27,6 +27,7 @@ export class ReactiveValue<T> extends Reactive<T, T>{
             'change' : 'input';
     }
 
+    isEqual = Utils.isEqual;
     private _setters = new Array<ReactiveValueSetter<T>>();
     private _origin: Reactive<any, any> | null = null;
     private _originWatcher: ReactiveWatcher<any> | null = null;
@@ -41,15 +42,22 @@ export class ReactiveValue<T> extends Reactive<T, T>{
     }
 
     setSync(value: T) {
-        this.current = value;
-        this._setters.length = 0;
-        this._setSchedule();
+        if (!this.isEqual(this.current, value)) {
+            this.current = value;
+            this._setters.length = 0;
+            this._setSchedule();
+        }
         return this;
     }
 
     update() {
-        const value = this._setters.reduce((cur, setter) => setter(cur), this.current);
-        this._setters.length = 0;
+        const { _setters } = this,
+            value = _setters.reduce((cur, setter) => setter(cur), this.current);
+        if (_setters.length && this.isEqual(this.current, value)) {
+            return;
+        } else {
+            _setters.length = 0;
+        }
         this.current = value;
         this._getters.forEach(getter => {
             getter(value);
