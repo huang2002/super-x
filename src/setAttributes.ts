@@ -7,7 +7,9 @@ export type DirectiveHandler = (element: HTMLElement, value: unknown) => void;
 export const directives = new Map<string, DirectiveHandler>([
 
     ['bind', (element, reactiveValue) => {
-        (reactiveValue as ReactiveValue<string>).bind(element);
+        if (reactiveValue) {
+            (reactiveValue as ReactiveValue<string>).bind(element);
+        }
     }],
 
     ['class', (element, classes) => {
@@ -32,7 +34,9 @@ export const directives = new Map<string, DirectiveHandler>([
     }],
 
     ['listeners', (element, listeners) => {
-        attachListeners(element, listeners as ListenerMap);
+        if (listeners) {
+            attachListeners(element, listeners as ListenerMap);
+        }
     }],
 
     ['style', (element, style) => {
@@ -44,7 +48,9 @@ export const directives = new Map<string, DirectiveHandler>([
     }],
 
     ['ref', (element, reference) => {
-        (reference as ReactiveValue<HTMLElement>).setSync(element);
+        if (reference) {
+            (reference as ReactiveValue<HTMLElement>).setSync(element);
+        }
     }],
 
 ]);
