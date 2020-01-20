@@ -1,3 +1,8 @@
+### 0.14.1 - 2020-01-20
+
+- Improve built-in directives
+- Improve contributing guide
+
 ## 0.14.0 - 2020-01-17
 
 - Add `Utils.isEqual`
