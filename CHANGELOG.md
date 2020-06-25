@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.15.1
+
+- Fix list linking
+
 ## 0.15.0
 
 - Add support for class variations
