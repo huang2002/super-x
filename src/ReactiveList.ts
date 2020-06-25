@@ -6,10 +6,10 @@ import { Component } from "./createComponent";
 export type ReactiveListMapper<T, U> = (originalValue: T, $index: ReactiveValue<number>) => U;
 
 export type ReactiveListEvent<T> =
-    { type: 'replace', index: number, value: T, callback?: ReactiveGetter<T> } |
-    { type: 'insert', index: number, value: T } |
-    { type: 'push', value: T } | { type: 'delete', index: number, callback?: ReactiveGetter<T> } |
-    { type: 'setSync', list: readonly T[] };
+    { type: 'replace', index: number, value: T, callback?: ReactiveGetter<T>; } |
+    { type: 'insert', index: number, value: T; } |
+    { type: 'push', value: T; } | { type: 'delete', index: number, callback?: ReactiveGetter<T>; } |
+    { type: 'setSync', list: readonly T[]; };
 
 export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>> {
 
@@ -131,12 +131,13 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
 
     linkElement(element: HTMLElement, mapper: ReactiveListMapper<T, Node> = Utils.toNode) {
         if (!this._elementWatchers.has(element)) {
-            const { current, _$indices } = this;
+            const { current: init, _$indices } = this;
             element.innerHTML = '';
             element.appendChild(Utils.createFragment(
-                current.map((item, i) => mapper(item, _$indices[i]))
+                init.map((item, i) => mapper(item, _$indices[i]))
             ));
             const watcher = (event: ReactiveListEvent<T>) => {
+                const { current } = this;
                 const { childNodes } = element;
                 switch (event.type) {
                     case 'replace':
