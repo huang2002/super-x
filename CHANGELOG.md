@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.15.2
+
+- Fix list indices
+
 ## 0.15.1
 
 - Fix list linking
