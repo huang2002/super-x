@@ -108,6 +108,11 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
                     }
                     Utils.removeIndex(_$indices, event.index);
                     break;
+                case 'setSync':
+                    for (let i = _$indices.length; i < current.length; i++) {
+                        _$indices.push(new ReactiveValue(i));
+                    }
+                    break;
             }
             _watchers.forEach(watcher => {
                 watcher(event);
