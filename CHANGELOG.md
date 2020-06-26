@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.16.0
+
+- Improve `reactiveList.toElement`
+
 ## 0.15.2
 
 - Fix list indices
