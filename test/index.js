@@ -142,7 +142,7 @@ document.body.appendChild(X.Utils.createFragment([
     AddItemOnce(0),
     AddItemOnce(1),
     AddItemOnce(2),
-    $list.toElement('ul', Item),
+    $list.toElement('ul', { id: 'list' }, Item),
     h('p', null,
         '$list: ',
         $list.toValue(list => h('span', null, list.join(', ')))

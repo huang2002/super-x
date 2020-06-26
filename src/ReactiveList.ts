@@ -2,6 +2,7 @@ import { Reactive, ReactiveWatcher, ReactiveMapper, ReactiveGetter } from "./Rea
 import { Utils } from "./Utils";
 import { ReactiveValue } from "./ReactiveValue";
 import { Component } from "./createComponent";
+import { createElement } from './createElement';
 
 export type ReactiveListMapper<T, U> = (originalValue: T, $index: ReactiveValue<number>) => U;
 
@@ -193,8 +194,12 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
         return this;
     }
 
-    toElement(tag = ReactiveList.defaultTag, mapper?: ReactiveListMapper<T, Node>) {
-        return this.linkElement(document.createElement(tag), mapper);
+    toElement(
+        tag = ReactiveList.defaultTag,
+        attributes: object | null = null,
+        mapper?: ReactiveListMapper<T, Node>
+    ) {
+        return this.linkElement(createElement(tag, attributes), mapper);
     }
 
 }
