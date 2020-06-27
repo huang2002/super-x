@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.16.1
+
+- Fix todo example
+
 ## 0.16.0
 
 - Improve `reactiveList.toElement`
