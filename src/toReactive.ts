@@ -2,6 +2,10 @@ import { ReactiveList } from "./ReactiveList";
 import { ReactiveValue } from "./ReactiveValue";
 import { Utils } from "./Utils";
 
+/**
+ * Make a type reactive
+ * (e.g., `number[]` -> `ReactiveList<number>`)
+ */
 export type ToReactive<T> =
     T extends (infer U)[] ? (
         ReactiveList<U>
@@ -10,7 +14,10 @@ export type ToReactive<T> =
         { [K in keyof T]: ReactiveValue<T[K]>; } :
         ReactiveValue<T>
     );
-
+/** dts2md break */
+/**
+ * Create a reactive wrapper from the given value
+ */
 export const toReactive = <T>(value: T): ToReactive<T> => {
     if (value && typeof value === 'object') {
         if (Array.isArray(value)) {

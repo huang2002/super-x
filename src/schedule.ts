@@ -1,8 +1,11 @@
 import { Utils } from "./Utils";
 
+/**
+ * Type of schedule callbacks
+ */
 export type ScheduleCallback = () => void;
 
-export interface ScheduleItem {
+interface ScheduleItem {
     id: number;
     callback: ScheduleCallback;
 };
@@ -10,7 +13,10 @@ export interface ScheduleItem {
 const _scheduleItems = new Array<ScheduleItem>();
 let _willTick = false,
     _id = 0;
-
+/** dts2md break */
+/**
+ * Time limitation of each tick
+ */
 export let tickLimit = 12;
 
 const _tick = () => {
@@ -29,7 +35,11 @@ const _requestTick = () => {
     requestAnimationFrame(_tick);
     _willTick = true;
 };
-
+/** dts2md break */
+/**
+ * Add a callback to the schedule
+ * @returns A unique id
+ */
 export const setSchedule = (callback: ScheduleCallback) => {
     const id = _id++;
     _scheduleItems.push({ id, callback });
@@ -38,7 +48,11 @@ export const setSchedule = (callback: ScheduleCallback) => {
     }
     return id;
 };
-
+/** dts2md break */
+/**
+ * Remove a callback from the schedule
+ * @param id The id returned by `setSchedule`
+ */
 export const clearSchedule = (id: number) => {
     const index = _scheduleItems.findIndex(item => item.id === id);
     if (~index) {

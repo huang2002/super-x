@@ -2,45 +2,78 @@ import { Reactive, ReactiveWatcher, ReactiveMapper } from "./Reactive";
 import { Utils } from "./Utils";
 import { Component } from "./createComponent";
 
+/**
+ * Type of reactive value setters which receives
+ * the old value and returns a new one
+ */
 export type ReactiveValueSetter<T> = (currentValue: T) => T;
-
+/** dts2md break */
+/**
+ * Type of object keys
+ */
 export type Key = string | number | symbol;
-
+/** dts2md break */
+/**
+ * Type of internal reactive link records
+ */
 export interface ReactiveLink<T, K extends Key, U> {
     target: Record<K, U>;
     key: K;
     watcher: ReactiveWatcher<T>;
 }
-
+/** dts2md break */
+/**
+ * Type of internal reactive value bindings
+ */
 export interface ReactiveValueBinding<T> {
     event: string;
     listener: (event: Event) => void;
     watcher: ReactiveWatcher<T>;
 }
-
+/** dts2md break */
+/**
+ * Class of reactive values
+ */
 export class ReactiveValue<T> extends Reactive<T, T>{
-
+    /** dts2md break */
+    /**
+     * Get corresponding input event name of the element
+     */
     static getBindingEvent(element: HTMLElement) {
-        return (element.tagName === 'INPUT' &&
-            element.getAttribute('type') === 'range' ||
-            element.tagName === 'SELECT') ?
-            'change' : 'input';
+        return ((
+            element.tagName === 'INPUT'
+            && element.getAttribute('type') === 'range'
+            || element.tagName === 'SELECT'
+        )
+            ? 'change'
+            : 'input'
+        );
     }
-
+    /** dts2md break */
+    /**
+     * The comparing function used internally
+     */
     isEqual = Utils.isEqual;
+    /** dts2md break */
     private _setters = new Array<ReactiveValueSetter<T>>();
     private _origin: Reactive<any, any> | null = null;
     private _originWatcher: ReactiveWatcher<any> | null = null;
     private _links = new Array<ReactiveLink<T, any, any>>();
     private _bindings = new Map<HTMLElement, ReactiveValueBinding<T>>();
     private _nodeWatchers = new Map<Node, ReactiveWatcher<T>>();
-
+    /** dts2md break */
+    /**
+     * Update the value asynchronously
+     */
     set(setter: ReactiveValueSetter<T>) {
         this._setters.push(setter);
         this._setSchedule();
         return this;
     }
-
+    /** dts2md break */
+    /**
+     * Update the value synchronously
+     */
     setSync(value: T) {
         if (!this.isEqual(this.current, value)) {
             this.current = value;
@@ -49,7 +82,7 @@ export class ReactiveValue<T> extends Reactive<T, T>{
         }
         return this;
     }
-
+    /** dts2md break */
     update() {
         const { _setters } = this,
             value = _setters.reduce((cur, setter) => setter(cur), this.current);
@@ -66,7 +99,11 @@ export class ReactiveValue<T> extends Reactive<T, T>{
             watcher(value);
         });
     }
-
+    /** dts2md break */
+    /**
+     * Map the reactive value to another one
+     * @param mapper A transform function
+     */
     map<U>(mapper: ReactiveMapper<T, U>) {
         const value = new ReactiveValue(mapper(this.current));
         value.linkOrigin(this, originalValue => {
@@ -74,7 +111,10 @@ export class ReactiveValue<T> extends Reactive<T, T>{
         });
         return value;
     }
-
+    /** dts2md break */
+    /**
+     * Link the origin reactive value (used internally)
+     */
     linkOrigin<T>(origin: Reactive<any, T>, watcher: ReactiveWatcher<T>) {
         if (this._origin) {
             this.unlinkOrigin();
@@ -84,7 +124,10 @@ export class ReactiveValue<T> extends Reactive<T, T>{
         origin.watch(watcher);
         return this;
     }
-
+    /** dts2md break */
+    /**
+     * Unlink the origin reactive value (used internally)
+     */
     unlinkOrigin() {
         const { _origin } = this;
         if (_origin) {
@@ -93,7 +136,15 @@ export class ReactiveValue<T> extends Reactive<T, T>{
         }
         return this;
     }
-
+    /** dts2md break */
+    /**
+     * Link the reactive value with specific property
+     * of the object so that the property is synchronized
+     * when the reactive value changes
+     * @param target The target object
+     * @param key The key of the property to link
+     * @param mapper Optional transform function
+     */
     link<U extends Record<K, T>, K extends Key>(
         target: U, key: K
     ): U;
@@ -113,7 +164,10 @@ export class ReactiveValue<T> extends Reactive<T, T>{
         }
         return target;
     }
-
+    /** dts2md break */
+    /**
+     * Unlink a previously linked property
+     */
     unlink<U>(target: U, key: keyof U) {
         const index = this._links.findIndex(link => link.target === target && link.key === key);
         if (~index) {
@@ -122,11 +176,21 @@ export class ReactiveValue<T> extends Reactive<T, T>{
         }
         return this;
     }
-
+    /** dts2md break */
+    /**
+     * Map the reactive value to a text node
+     * @param mapper Optional transform function
+     */
     toText(mapper?: ReactiveMapper<T, string>) {
         return this.link(document.createTextNode(''), 'data', mapper);
     }
-
+    /** dts2md break */
+    /**
+     * Link the reactive value with a node so that
+     * the node is synchronized with the reactive value
+     * @param node Target node
+     * @param mapper Optional transform function (default: `Utils.toNode`)
+     */
     linkNode(node: Node, mapper: ReactiveMapper<T, Node> = Utils.toNode) {
         if (!this._nodeWatchers.has(node)) {
             const isComponent = (mapper as Component<any, [], Node>)._isComponent;
@@ -148,7 +212,10 @@ export class ReactiveValue<T> extends Reactive<T, T>{
         }
         return node;
     }
-
+    /** dts2md break */
+    /**
+     * Unlink a previously linked node
+     */
     unlinkNode(node: Node) {
         const watcher = this._nodeWatchers.get(node);
         if (watcher) {
@@ -160,11 +227,23 @@ export class ReactiveValue<T> extends Reactive<T, T>{
         }
         return this;
     }
-
+    /** dts2md break */
+    /**
+     * Map the reactive value to a DOM node
+     * @param mapper Optional transform function (default: `Utils.toNode`)
+     */
     toNode(mapper: ReactiveMapper<T, Node> = Utils.toNode) {
         return this.linkNode(mapper(this.current), mapper);
     }
-
+    /** dts2md break */
+    /**
+     * Bind the reactive value with the input element
+     * so that the reactive value is updated when
+     * the value of the input element changes
+     * (Here input elements refer to any elements
+     * that accept input data from users)
+     * @param element The input element
+     */
     bind(element: HTMLElement) {
         if (!this._bindings.has(element)) {
             const event = ReactiveValue.getBindingEvent(element),
@@ -181,7 +260,10 @@ export class ReactiveValue<T> extends Reactive<T, T>{
         }
         return this;
     }
-
+    /** dts2md break */
+    /**
+     * Unbind a previously bound element
+     */
     unbind(element: HTMLElement) {
         const binding = this._bindings.get(element);
         if (binding) {
