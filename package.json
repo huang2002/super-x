@@ -8,7 +8,8 @@
     "scripts": {
         "prebuild": "tsc",
         "build": "rollup -c",
-        "postbuild": "terser dist/super-x.js --config-file terser.json --module -o dist/super-x.min.js && terser dist/super-x.umd.js --config-file terser.json -o dist/super-x.umd.min.js && node stat"
+        "postbuild": "terser dist/super-x.js --config-file terser.json --module -o dist/super-x.min.js && terser dist/super-x.umd.js --config-file terser.json -o dist/super-x.umd.min.js && node stat",
+        "docs": "dts2md \"**\" \"!index.d.ts\" -i typings -o docs -l -I API.md"
     },
     "license": "MIT",
     "author": "3h",
@@ -35,6 +36,7 @@
     "devDependencies": {
         "@babel/core": "^7.10.3",
         "@babel/preset-env": "^7.10.3",
+        "dts2md": "^0.4.2",
         "hpolyfill": "^0.22.0",
         "rollup": "^2.18.0",
         "rollup-plugin-babel": "^4.4.0",
