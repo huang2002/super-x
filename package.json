@@ -38,7 +38,7 @@
         "@babel/preset-env": "^7.10.3",
         "dts2md": "^0.4.2",
         "hpolyfill": "^0.22.0",
-        "rollup": "^2.18.0",
+        "rollup": "^2.18.1",
         "rollup-plugin-babel": "^4.4.0",
         "terser": "^4.8.0",
         "typescript": "^3.9.5"
