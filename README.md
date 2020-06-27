@@ -23,28 +23,28 @@ const h = X.createElement;
 // the item list
 const $list = X.toReactive([]);
 
-const ListItem = X.createComponent(($item, $index) => h(
-    'li',
-    {
+const ListItem = X.createComponent(($item, $index) => (
+    h('li', {
         style: {
             textDecoration: $item.finished.map(
-                finished => finished ? 'line-through' : 'none'
-            )
+               finished => finished ? 'line-through' : 'none'
+            ),
         },
         listeners: {
             click() {
-                $list.replace($index, {
+                $list.replace($index.current, {
                     content: $item.content.current,
-                    finished: !$item.finished.current
+                    finished: !$item.finished.current,
                 });
-            }
-        }
+            },
+        },
     },
-    $item.content.toText()
+        $item.content,
+    )
 ));
 
 function TodoApp() {
-    // the input element reference
+    // the reference of the input element
     const $inputRef = new X.ReactiveValue(null);
     // submission handler
     function submit() {
@@ -62,12 +62,9 @@ function TodoApp() {
         h('h1', null, 'TODO LIST'),
         h('form', { action: 'javascript:;', listeners: { submit } },
             h('input', { ref: $inputRef, placeholder: 'content' }),
-            h('input', { type: 'submit', value: 'add' })
+            h('input', { type: 'submit', value: 'add' }),
         ),
-        $list.toElement('ul', ListItem)
+        $list.toElement('ul', null, ListItem),
     ]);
 }
-
-// append the app instance to the body
-document.body.appendChild(TodoApp());
 ```
