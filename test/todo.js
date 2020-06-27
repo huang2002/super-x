@@ -7,12 +7,12 @@ const ListItem = X.createComponent(($item, $index) => (
     h('li', {
         style: {
             textDecoration: $item.finished.map(
-               finished => finished ? 'line-through' : 'none'
+                finished => finished ? 'line-through' : 'none'
             ),
         },
         listeners: {
             click() {
-                $list.replace($index.current, {
+                $list.replace($index, {
                     content: $item.content.current,
                     finished: !$item.finished.current,
                 });

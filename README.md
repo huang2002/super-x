@@ -32,7 +32,7 @@ const ListItem = X.createComponent(($item, $index) => (
         },
         listeners: {
             click() {
-                $list.replace($index.current, {
+                $list.replace($index, {
                     content: $item.content.current,
                     finished: !$item.finished.current,
                 });
