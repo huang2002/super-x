@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.16.2
+
+- Fix list linking
+- Improve docs
+
 ## 0.16.1
 
 - Fix todo example
