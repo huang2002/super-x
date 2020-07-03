@@ -1,7 +1,7 @@
 {
     "name": "super-x",
     "description": "A reactive UI lib.",
-    "version": "0.16.1",
+    "version": "0.16.2",
     "main": "dist/super-x.umd.min.js",
     "module": "dist/super-x.min.js",
     "types": "index.d.ts",
