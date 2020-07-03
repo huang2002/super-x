@@ -202,7 +202,7 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
             ));
             const watcher = (event: ReactiveListEvent<T>) => {
                 const { current } = this;
-                const { childNodes } = element;
+                const childNodes = Array.from(element.childNodes);
                 switch (event.type) {
                     case 'replace':
                         if ((mapper as Component<any, unknown[], Node>)._isComponent) {
