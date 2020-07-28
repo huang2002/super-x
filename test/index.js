@@ -108,6 +108,7 @@ const LABEL_CLASS = X.createClass({
 });
 
 const INPUT_CLASS = X.createClass({
+    width: '8em',
     padding: '.2em .3em',
     border: 'none',
     boxShadow: '0 1px 0 #666',
@@ -117,6 +118,9 @@ const INPUT_CLASS = X.createClass({
         boxShadow: '0 1px 0 #111',
     },
 });
+
+const $composePart1 = X.toReactive('part1');
+const $composePart2 = X.toReactive('part2');
 
 document.body.appendChild(X.Utils.createFragment([
     h('h1', { style: { color: $title.color } }, $title.content.map(title => `# ${title}`)),
@@ -146,5 +150,15 @@ document.body.appendChild(X.Utils.createFragment([
     h('p', null,
         '$list: ',
         $list.toValue(list => h('span', null, list.join(', ')))
-    )
+    ),
+    h('p', null,
+        h('input', { class: INPUT_CLASS, bind: $composePart1 }),
+        ' + "; " + ',
+        h('input', { class: INPUT_CLASS, bind: $composePart2 }),
+        ' = ',
+        X.ReactiveValue.compose(
+            [$composePart1, $composePart2],
+            ([part1, part2]) => `${part1}; ${part2}`
+        ),
+    ),
 ]));

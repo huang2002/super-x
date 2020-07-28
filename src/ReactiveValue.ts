@@ -51,6 +51,25 @@ export class ReactiveValue<T> extends Reactive<T, T>{
     }
     /** dts2md break */
     /**
+     * TODO:
+     * @param origins
+     * @param composer
+     */
+    static compose<T>(
+        origins: ReactiveValue<any>[],
+        composer: ReactiveMapper<unknown[], T>,
+    ) {
+        const extractValues = () => (
+            origins.map(origin => origin.current)
+        );
+        const value = new ReactiveValue(composer(extractValues()));
+        value.linkOrigins(origins, () => {
+            value.setSync(composer(extractValues()));
+        });
+        return value;
+    }
+    /** dts2md break */
+    /**
      * The comparing function used internally
      */
     isEqual = Utils.isEqual;
