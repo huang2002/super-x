@@ -51,9 +51,10 @@ export class ReactiveValue<T> extends Reactive<T, T>{
     }
     /** dts2md break */
     /**
-     * TODO:
-     * @param origins
-     * @param composer
+     * Compose a new reactive value from existing ones
+     * @param origins origin reactive values
+     * @param composer a function that receives current values
+     * of origins and returns a new value
      */
     static compose<T>(
         origins: ReactiveValue<any>[],
