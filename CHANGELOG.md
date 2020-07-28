@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.17.0
+
+- Add `ReactiveValue.compose`
+- Extend `ReactiveValue` origin to origins
+
 ## 0.16.2
 
 - Fix list linking
