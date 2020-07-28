@@ -99,7 +99,7 @@ export namespace Utils {
                 valueIsReactive = value instanceof ReactiveValue;
             if (originalValue instanceof ReactiveValue) {
                 if (valueIsReactive) {
-                    originalValue.linkOrigin(value as ReactiveValue<unknown>, newValue => {
+                    originalValue.linkOrigins([value as ReactiveValue<unknown>], newValue => {
                         originalValue.setSync(newValue);
                     });
                 } else {
@@ -120,12 +120,12 @@ export namespace Utils {
      */
     export const destroy = (value: object) => {
         if (value instanceof ReactiveValue) {
-            value.unlinkOrigin();
+            value.unlinkOrigins();
         } else {
             Utils.iterate(value as any, (key, property) => {
                 if (property && typeof property === 'object') {
                     if (property instanceof ReactiveValue) {
-                        property.unlinkOrigin();
+                        property.unlinkOrigins();
                     } else {
                         Utils.destroy(property!);
                     }

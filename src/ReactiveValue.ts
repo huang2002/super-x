@@ -56,7 +56,7 @@ export class ReactiveValue<T> extends Reactive<T, T>{
     isEqual = Utils.isEqual;
     /** dts2md break */
     private _setters = new Array<ReactiveValueSetter<T>>();
-    private _origin: Reactive<any, any> | null = null;
+    private _origins: Reactive<any, any>[] = [];
     private _originWatcher: ReactiveWatcher<any> | null = null;
     private _links = new Array<ReactiveLink<T, any, any>>();
     private _bindings = new Map<HTMLElement, ReactiveValueBinding<T>>();
@@ -106,33 +106,37 @@ export class ReactiveValue<T> extends Reactive<T, T>{
      */
     map<U>(mapper: ReactiveMapper<T, U>) {
         const value = new ReactiveValue(mapper(this.current));
-        value.linkOrigin(this, originalValue => {
+        value.linkOrigins([this], originalValue => {
             value.setSync(mapper(originalValue));
         });
         return value;
     }
     /** dts2md break */
     /**
-     * Link the origin reactive value (used internally)
+     * Link the origin reactive value(s) (used internally)
      */
-    linkOrigin<T>(origin: Reactive<any, T>, watcher: ReactiveWatcher<T>) {
-        if (this._origin) {
-            this.unlinkOrigin();
+    linkOrigins<T>(origins: Reactive<any, T>[], watcher: ReactiveWatcher<T>) {
+        if (this._origins.length) {
+            this.unlinkOrigins();
         }
-        this._origin = origin;
+        this._origins = origins;
         this._originWatcher = watcher;
-        origin.watch(watcher);
+        origins.forEach(origin => {
+            origin.watch(watcher);
+        });
         return this;
     }
     /** dts2md break */
     /**
-     * Unlink the origin reactive value (used internally)
+     * Unlink the origin reactive value(s) (used internally)
      */
-    unlinkOrigin() {
-        const { _origin } = this;
-        if (_origin) {
-            _origin.unwatch(this._originWatcher!);
-            this._origin = null;
+    unlinkOrigins() {
+        const { _origins } = this;
+        if (_origins.length) {
+            _origins.forEach(origin => {
+                origin.unwatch(this._originWatcher!);
+            });
+            _origins.length = 0;
         }
         return this;
     }

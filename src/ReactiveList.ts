@@ -180,7 +180,7 @@ export class ReactiveList<T> extends Reactive<readonly T[], ReactiveListEvent<T>
     toValue<U>(mapper?: ReactiveMapper<readonly T[], U>): ReactiveValue<U>;
     toValue<U>(mapper?: ReactiveMapper<readonly T[], U>) {
         const value = new ReactiveValue(mapper ? mapper(this.current) : this.current);
-        value.linkOrigin(this, () => {
+        value.linkOrigins([this], () => {
             value.setSync(mapper ? mapper(this.current) : this.current);
         });
         return value;
