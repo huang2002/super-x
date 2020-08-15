@@ -7,12 +7,16 @@ import { Utils } from "./Utils";
  * (e.g., `number[]` -> `ReactiveList<number>`)
  */
 export type ToReactive<T> =
-    T extends (infer U)[] ? (
-        ReactiveList<U>
-    ) : (
-        T extends object ?
-        { [K in keyof T]: ReactiveValue<T[K]>; } :
-        ReactiveValue<T>
+    T extends (infer U)[]
+    ? ReactiveList<U>
+    : (
+        T extends object
+        ? (
+            T extends Function
+            ? ReactiveValue<T>
+            : { [K in keyof T]: ReactiveValue<T[K]>; }
+        )
+        : ReactiveValue<T>
     );
 /** dts2md break */
 /**
