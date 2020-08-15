@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17.1
+
+- Fix `toReactive` type inference
+
 ## 0.17.0
 
 - Add `ReactiveValue.compose`
