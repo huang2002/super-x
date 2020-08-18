@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
+- Nothing
+
 ## 0.17.1
 
 - Fix `toReactive` type inference
