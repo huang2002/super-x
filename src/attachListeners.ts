@@ -21,12 +21,22 @@ export interface ListenerMap {
  * @param target Event target
  * @param listeners Event listeners
  */
-export const attachListeners = (target: EventTarget, listeners: ListenerMap) => {
-    Utils.iterate(listeners, (event, listenerObject: EventListener | ListenerObject) => {
-        if (typeof listenerObject === 'object') {
-            target.addEventListener(event, listenerObject.listener, listenerObject.options);
-        } else {
-            target.addEventListener(event, listenerObject);
+export const attachListeners = (
+    target: EventTarget,
+    listeners: ListenerMap
+) => {
+    Utils.iterate(
+        listeners,
+        (event, listenerObject: EventListener | ListenerObject) => {
+            if (typeof listenerObject === 'object') {
+                target.addEventListener(
+                    event,
+                    listenerObject.listener,
+                    listenerObject.options
+                );
+            } else {
+                target.addEventListener(event, listenerObject);
+            }
         }
-    });
+    );
 };

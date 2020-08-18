@@ -80,7 +80,10 @@ export namespace Utils {
      * Iterate the properties of the object
      * (using `Object.keys` internally)
      */
-    export const iterate = <T>(object: { [key: string]: T; }, iterator: (key: string, value: T) => void) => {
+    export const iterate = <T>(
+        object: { [key: string]: T; },
+        iterator: (key: string, value: T) => void
+    ) => {
         Object.keys(object).forEach(key => {
             iterator(key, (object as any)[key]);
         });
@@ -99,15 +102,21 @@ export namespace Utils {
                 valueIsReactive = value instanceof ReactiveValue;
             if (originalValue instanceof ReactiveValue) {
                 if (valueIsReactive) {
-                    originalValue.linkOrigins([value as ReactiveValue<unknown>], newValue => {
-                        originalValue.setSync(newValue);
-                    });
+                    originalValue.linkOrigins(
+                        [value as ReactiveValue<unknown>],
+                        newValue => {
+                            originalValue.setSync(newValue);
+                        }
+                    );
                 } else {
                     originalValue.setSync(value);
                 }
             } else {
                 if (valueIsReactive) {
-                    (value as ReactiveValue<unknown>).link(object as Record<string, unknown>, key);
+                    (value as ReactiveValue<unknown>).link(
+                        object as Record<string, unknown>,
+                        key
+                    );
                 } else {
                     (object as any)[key] = value;
                 }

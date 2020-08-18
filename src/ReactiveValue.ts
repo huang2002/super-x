@@ -193,7 +193,9 @@ export class ReactiveValue<T> extends Reactive<T, T>{
      * Unlink a previously linked property
      */
     unlink<U>(target: U, key: keyof U) {
-        const index = this._links.findIndex(link => link.target === target && link.key === key);
+        const index = this._links.findIndex(
+            link => link.target === target && link.key === key
+        );
         if (~index) {
             this.unwatch(this._links[index].watcher);
             Utils.removeIndex(this._links, index);

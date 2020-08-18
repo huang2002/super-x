@@ -35,9 +35,9 @@ export const directives = new Map<string, DirectiveHandler>([
         }
         if (typeof classes === 'object') {
             const toClassName = (classNames: object) => (
-                Array.isArray(classNames) ?
-                    classNames.filter(Boolean) :
-                    Object.keys(classNames).filter(key => (classNames as any)[key])
+                Array.isArray(classNames)
+                    ? classNames.filter(Boolean)
+                    : Object.keys(classNames).filter(key => (classNames as any)[key])
             ).join(' ');
             if (classes instanceof ReactiveValue) {
                 (classes as ReactiveValue<string[]>)
